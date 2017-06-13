@@ -21,6 +21,7 @@ module.exports = {
     "space-before-function-paren": [2, "always"],
     "import/no-extraneous-dependencies": [2, {"devDependencies": true}],
     "react/jsx-filename-extension": ["error", {"extensions": [".js"]}],
-    "react/require-default-props": [0]
+    "react/require-default-props": [0],
+    "class-methods-use-this": 0
   },
 };

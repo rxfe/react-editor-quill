@@ -1,19 +1,25 @@
-var webpack = require('webpack');
-var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
+const webpack = require('webpack');
 
-var reactExternal = {
+const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
+
+const reactExternal = {
   root: 'React',
   commonjs2: 'react',
   commonjs: 'react',
   amd: 'react'
 };
-var reactDOMExternal = {
+const reactDOMExternal = {
   root: 'ReactDOM',
   commonjs2: 'react-dom',
   commonjs: 'react-dom',
   amd: 'react-dom'
 };
-
+const quillExternal = {
+  root: 'Quill',
+  commonjs2: 'quill',
+  commonjs: 'quill',
+  amd: 'quill'
+};
 module.exports = {
 
   entry: {
@@ -22,8 +28,9 @@ module.exports = {
   },
 
   externals: {
-    'react': reactExternal,
-    'react-dom': reactDOMExternal
+    react: reactExternal,
+    'react-dom': reactDOMExternal,
+    quill: quillExternal
   },
 
   output: {
@@ -50,7 +57,7 @@ module.exports = {
 
   module: {
     loaders: [
-      { test: /\.js?$/, exclude: /node_modules/, loader: 'babel'}
+      { test: /\.js?$/, exclude: /node_modules/, loader: 'babel' }
     ]
   }
 
