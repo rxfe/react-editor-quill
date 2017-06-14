@@ -78,7 +78,7 @@ export default class BaseEditor extends React.Component {
   exposes read-only accessors found on the editor instance,
   without any state-modificating methods.
   */
-  makeUnprivilegedEditor (editor, ...arg) {
+  makeUnprivilegedEditor (editor) {
     const {
       getLength,
       getText,
@@ -87,11 +87,11 @@ export default class BaseEditor extends React.Component {
       getBounds
     } = editor;
     return {
-      getLength () { return getLength.apply(editor, arg); },
-      getText () { return getText.apply(editor, arg); },
-      getContents () { return getContents.apply(editor, arg); },
-      getSelection () { return getSelection.apply(editor, arg); },
-      getBounds () { return getBounds.apply(editor, arg); },
+      getLength (...arg) { return getLength.apply(editor, arg); },
+      getText (...arg) { return getText.apply(editor, arg); },
+      getContents (...arg) { return getContents.apply(editor, arg); },
+      getSelection (...arg) { return getSelection.apply(editor, arg); },
+      getBounds (...arg) { return getBounds.apply(editor, arg); },
     };
   }
 
