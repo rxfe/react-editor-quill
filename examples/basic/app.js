@@ -25,7 +25,7 @@ const defaultModules = {
 const source = ['11111111111', '22222222222', '333333333333', '444444444444'];
 const plugins = [<HelloWorld />,
   <Meniton source={source} formatter={formatter} module={defaultModules} />,
-  <Meniton delimiter="#" source={source} formatter={formatter} module={defaultModules} />];
+  <Meniton delimiter="#" mentionFormatter={data => `#${data.text}#`} source={source} formatter={formatter} module={defaultModules} />];
 const appElement = document.getElementById('example');
 
 
