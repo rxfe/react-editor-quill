@@ -3,6 +3,39 @@ import Quill from 'quill';
 
 export default class BaseEditor extends React.Component {
 
+  setEditorSelection (editor, r) {
+    const range = r;
+    if (range) {
+      // Validate bounds before applying.
+      const length = editor.getLength();
+      range.index = Math.max(0, Math.min(range.index, length - 1));
+      range.length = Math.max(0, Math.min(range.length, (length - 1) - range.index));
+    }
+    editor.setSelection(range);
+  }
+  /*
+  Replace the contents of the editor, but keep
+  the previous selection hanging around so that
+  the cursor won't move.
+  */
+  setEditorContents (editor, value) {
+    const sel = editor.getSelection();
+    editor.clipboard.dangerouslyPasteHTML(value || '');
+    if (sel) this.setEditorSelection(editor, sel);
+  }
+
+  setEditorReadOnly (editor, value) {
+    if (value) {
+      editor.disable();
+    } else {
+      editor.enable();
+    }
+  }
+  createEditor ($el, config) {
+    const editor = new Quill($el, config);
+    this.hookEditor(editor);
+    return editor;
+  }
   hookEditor (editor) {
     // Expose the editor on change events via a weaker,
     // unprivileged proxy object that does not allow
@@ -40,41 +73,6 @@ export default class BaseEditor extends React.Component {
     editor.off('editor-change');
   }
 
-  setEditorReadOnly (editor, value) {
-    if (value) {
-      editor.disable();
-    } else {
-      editor.enable();
-    }
-  }
-
-  /*
-  Replace the contents of the editor, but keep
-  the previous selection hanging around so that
-  the cursor won't move.
-  */
-  setEditorContents (editor, value) {
-    const sel = editor.getSelection();
-    editor.clipboard.dangerouslyPasteHTML(value || '');
-    if (sel) this.setEditorSelection(editor, sel);
-  }
-
-  setEditorSelection (editor, r) {
-    const range = r;
-    if (range) {
-      // Validate bounds before applying.
-      const length = editor.getLength();
-      range.index = Math.max(0, Math.min(range.index, length - 1));
-      range.length = Math.max(0, Math.min(range.length, (length - 1) - range.index));
-    }
-    editor.setSelection(range);
-  }
-
-  createEditor ($el, config) {
-    const editor = new Quill($el, config);
-    this.hookEditor(editor);
-    return editor;
-  }
   /*
   Returns an weaker, unprivileged proxy object that only
   exposes read-only accessors found on the editor instance,

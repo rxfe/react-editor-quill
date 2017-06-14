@@ -40,6 +40,7 @@
     "babel-preset-stage-2": "^6.18.0",
     "codeclimate-test-reporter": "^0.4.0",
     "coveralls": "^2.11.15",
+    "css-loader": "^0.28.4",
     "envify": "^3.4.1",
     "eslint": "^3.15.0",
     "eslint-config-airbnb": "^14.1.0",
@@ -61,13 +62,14 @@
     "karma-webpack": "^1.8.1",
     "mocha": "3.2.0",
     "npm-run-all": "^3.1.2",
-    "quill": "^1.2.6",
+    "quill": "^1.2.0",
     "react": "^15.0.0",
     "react-addons-test-utils": "^15.0.0",
     "react-dom": "^15.0.0",
     "rf-release": "0.4.0",
     "rimraf": "^2.5.4",
     "sinon": "next",
+    "style-loader": "^0.18.2",
     "uglify-js": "2.4.24",
     "webpack": "^1.12.14",
     "webpack-dev-server": "1.11.0"
@@ -81,7 +83,8 @@
   },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0",
-    "react-dom": "^0.14.0 || ^15.0.0"
+    "react-dom": "^0.14.0 || ^15.0.0",
+    "quill": "^1.2.0"
   },
   "license": "MIT",
   "bugs": {

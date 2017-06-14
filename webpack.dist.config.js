@@ -23,8 +23,8 @@ const quillExternal = {
 module.exports = {
 
   entry: {
-    'react-modal': './lib/index.js',
-    'react-modal.min': './lib/index.js'
+    'react-editor-quill': './lib/index.js',
+    'react-editor-quill.min': './lib/index.js'
   },
 
   externals: {
@@ -39,7 +39,7 @@ module.exports = {
     path: 'dist',
     publicPath: '/',
     libraryTarget: 'umd',
-    library: 'ReactModal'
+    library: 'ReactEditorQuill'
   },
 
   plugins: [

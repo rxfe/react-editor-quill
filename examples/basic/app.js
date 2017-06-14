@@ -1,12 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'quill/dist/quill.snow.css';
+import Editor from '../../lib/';
 
 const appElement = document.getElementById('example');
 
-class App extends React.Component {
-  render () {
-    return (<span>123</span>);
-  }
-}
 
-ReactDOM.render(<App />, appElement);
+ReactDOM.render(<Editor />, appElement);

@@ -3,24 +3,23 @@
 /* eslint react/no-render-return-value: "warn" */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Modal from '../src/components/Modal';
+import Editor from '../src/components/Editor';
 
 const divStack = [];
 
-export function renderModal (props, children, callback) {
+export function renderEditor (props, children, callback) {
   const myProps = {
-    ariaHideApp: false,
     ...props
   };
   const currentDiv = document.createElement('div');
   divStack.push(currentDiv);
   document.body.appendChild(currentDiv);
   return ReactDOM.render(
-    <Modal {...myProps}>{children}</Modal>
+    <Editor {...myProps}>{children}</Editor>
   , currentDiv, callback);
 }
 
-export const unmountModal = () => {
+export const unmountEditor = () => {
   const currentDiv = divStack.pop();
   ReactDOM.unmountComponentAtNode(currentDiv);
   document.body.removeChild(currentDiv);
@@ -28,6 +27,6 @@ export const unmountModal = () => {
 
 export const emptyDOM = () => {
   while (divStack.length) {
-    unmountModal();
+    unmountEditor();
   }
 };
