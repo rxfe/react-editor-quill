@@ -152,8 +152,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 	}
 
-	var T = _react2.default.PropTypes;
-
 	var Editor = function (_BaseEditor) {
 	  _inherits(Editor, _BaseEditor);
 
@@ -412,40 +410,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	}(_BaseEditor3.default);
 
 	Editor.propTypes = {
-	  id: T.string,
-	  className: T.string,
-	  theme: T.string,
-	  style: T.objectOf(T.any),
-	  readOnly: T.bool,
-	  value: T.string,
-	  defaultValue: T.string,
-	  placeholder: T.string,
-	  bounds: T.oneOfType([T.string, T.element]),
-	  onKeyPress: T.func,
-	  onKeyDown: T.func,
-	  onKeyUp: T.func,
-	  onChange: T.func,
-	  onChangeSelection: T.func,
-	  modules: T.objectOf(T.any),
-	  formats: T.arrayOf(T.any),
-	  children: function children(props) {
-	    for (var _len = arguments.length, arg = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	      arg[_key - 1] = arguments[_key];
-	    }
-
-	    // Validate that the editor has only one child element and it is not a <textarea>
-	    var isNotASingleElement = T.element.apply(this, arg);
-	    if (isNotASingleElement) {
-	      return new Error('The Quill editing area can only be composed of a single React element.');
-	    }
-	    if (_react2.default.Children.count(props.children)) {
-	      var child = _react2.default.Children.only(props.children);
-	      if (child.type === 'textarea') {
-	        return new Error('Quill does not support editing on a <textarea>. Use a <div> instead.');
-	      }
-	    }
-	    return null;
-	  }
+	  id: _reactDom.PropTypes.string,
+	  className: _reactDom.PropTypes.string,
+	  theme: _reactDom.PropTypes.string,
+	  style: _reactDom.PropTypes.objectOf(_reactDom.PropTypes.any),
+	  readOnly: _reactDom.PropTypes.bool,
+	  value: _reactDom.PropTypes.string,
+	  defaultValue: _reactDom.PropTypes.string,
+	  placeholder: _reactDom.PropTypes.string,
+	  bounds: _reactDom.PropTypes.oneOfType([_reactDom.PropTypes.string, _reactDom.PropTypes.element]),
+	  onKeyPress: _reactDom.PropTypes.func,
+	  onKeyDown: _reactDom.PropTypes.func,
+	  onKeyUp: _reactDom.PropTypes.func,
+	  onChange: _reactDom.PropTypes.func,
+	  onChangeSelection: _reactDom.PropTypes.func,
+	  modules: _reactDom.PropTypes.objectOf(_reactDom.PropTypes.any),
+	  formats: _reactDom.PropTypes.arrayOf(_reactDom.PropTypes.any),
+	  children: _reactDom.PropTypes.element
 	};
 	Editor.dirtyProps = ['modules', 'formats', 'bounds', 'theme', 'children'];
 	Editor.cleanProps = ['id', 'className', 'style', 'placeholder', 'onKeyPress', 'onKeyDown', 'onKeyUp', 'onChange', 'onChangeSelection'];

@@ -1,7 +1,5 @@
-import React from 'react';
+import React, { PropTypes as T } from 'react';
 import ReactDOM from 'react-dom';
-import some from 'lodash.some';
-import T from 'prop-types';
 import isEqual from 'lodash.isequal';
 import BaseEditor from './BaseEditor';
 
@@ -23,6 +21,7 @@ export default class Editor extends BaseEditor {
     onChangeSelection: T.func,
     modules: T.objectOf(T.any),
     formats: T.arrayOf(T.any),
+    plugins: T.arrayOf(T.any),
     children: T.element
   }
   static dirtyProps = [
@@ -31,6 +30,7 @@ export default class Editor extends BaseEditor {
     'bounds',
     'theme',
     'children',
+    'plugins'
   ]
   /*
   Changing one of these props should cause a regular update.
@@ -100,6 +100,9 @@ export default class Editor extends BaseEditor {
       this.getEditingArea(),
       this.getEditorConfig()
     );
+    if (this.props.plugins) {
+      this.renderPlugins(this.editor);
+    }
     // Restore editor from Quill's native formats in regeneration scenario
     if (this.quillDelta) {
       this.editor.setContents(this.quillDelta);
@@ -127,7 +130,7 @@ export default class Editor extends BaseEditor {
     }
 
     // Compare props that require React updating the DOM.
-    return some(this.cleanProps, prop =>
+    return Editor.cleanProps.some(prop =>
       // Note that `isEqual` compares deeply, making it safe to perform
       // non-immutable updates, at the cost of performance.
       !isEqual(nextProps[prop], this.props[prop])
@@ -136,7 +139,7 @@ export default class Editor extends BaseEditor {
 
   shouldComponentRegenerate (nextProps) {
     // Whenever a `dirtyProp` changes, the editor needs reinstantiation.
-    return some(this.dirtyProps, prop =>
+    return Editor.dirtyProps.some(prop =>
       // Note that `isEqual` compares deeply, making it safe to perform
       // non-immutable updates, at the cost of performance.
       !isEqual(nextProps[prop], this.props[prop])
@@ -185,7 +188,23 @@ export default class Editor extends BaseEditor {
   getEditorSelection () {
     return this.state.selection;
   }
-
+  renderPlugins (quill) {
+    if (!this.pluginsTarget) return;
+    ReactDOM.render(
+      (
+        <div>
+          {
+            React.Children.map(this.props.plugins, (plugin) => {
+              const cp = {
+                quill
+              };
+              return React.cloneElement(plugin, cp);
+            })
+          }
+        </div>
+      ),
+    this.pluginsTarget);
+  }
   /*
   Regenerating the editor will cause the whole tree, including the container,
   to be cleaned up and re-rendered from scratch.
@@ -256,6 +275,7 @@ export default class Editor extends BaseEditor {
         className={['quill'].concat(this.props.className).join(' ')}
       >
         {this.renderEditingArea()}
+        <div ref={target => (this.pluginsTarget = target)} />
       </div>
     );
   }

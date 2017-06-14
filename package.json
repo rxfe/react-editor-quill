@@ -75,16 +75,16 @@
     "webpack-dev-server": "1.11.0"
   },
   "dependencies": {
-    "element-class": "^0.2.0",
-    "exenv": "1.2.0",
+    "classnames": "^2.2.5",
+    "lodash": "^4.17.4",
     "lodash.isequal": "^4.5.0",
     "lodash.some": "^4.6.0",
     "prop-types": "^15.5.10"
   },
   "peerDependencies": {
+    "quill": "^1.2.0",
     "react": "^0.14.0 || ^15.0.0",
-    "react-dom": "^0.14.0 || ^15.0.0",
-    "quill": "^1.2.0"
+    "react-dom": "^0.14.0 || ^15.0.0"
   },
   "license": "MIT",
   "bugs": {
