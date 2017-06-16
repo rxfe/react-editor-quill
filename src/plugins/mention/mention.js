@@ -100,24 +100,6 @@ class QuillMention extends Component {
           break;
       }
     }
-    window.setTimeout(() => {
-      try {
-        const panel = document.querySelector('.kuma-mention-panel-visible');
-        const current = document.querySelector('.kuma-mention-panel-item-current');
-        if (panel && current) {
-          const clientHeight = panel.clientHeight;
-          const curClientHeight = current.clientHeight;
-          const offsetTop = current.offsetTop;
-          const scrollTop = panel.scrollTop;
-          const range = Math.abs(offsetTop - scrollTop) + curClientHeight;
-          if (range > clientHeight || scrollTop > offsetTop) {
-            panel.scrollTop = offsetTop;
-          }
-        }
-      } catch (error) {
-        console.warn(error);
-      }
-    }, 0);
   }
   onKeydown (e) {
     const { panelVisible } = this.state;
@@ -364,7 +346,7 @@ QuillMention.propTypes = {
 }
 QuillMention.defaultProps = {
   delimiter: '@',
-  prefixCls: 'kuma-mention',
+  prefixCls: 'quill-mention',
   source: [],
   delay: 100,
   matchRange: [0, 20],

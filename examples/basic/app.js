@@ -22,13 +22,30 @@ const defaultModules = {
     ['clean']
   ]
 };
-const source = ['11111111111', '22222222222', '333333333333', '444444444444'];
+const source = ['11111111111', '22222222222', '333333333333', '444444444444', '11111111111', '22222222222', '333333333333', '444444444444', '11111111111', '22222222222', '333333333333', '444444444444', '11111111111', '22222222222', '333333333333', '444444444444'];
 const plugins = [<HelloWorld />,
   <Meniton source={source} formatter={formatter} module={defaultModules} />,
   <Meniton delimiter="#" mentionFormatter={data => `#${data.text}#`} source={source} formatter={formatter} module={defaultModules} />];
 const appElement = document.getElementById('example');
 
 
-ReactDOM.render(<div style={{ position: 'relative' }} >
+ReactDOM.render(<div>
   <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <Editor plugins={plugins} />
+  <input type="text" />
 </div>, appElement);

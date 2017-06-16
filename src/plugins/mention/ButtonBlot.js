@@ -32,5 +32,5 @@ class ButtonBlot extends Embed {
 
 ButtonBlot.blotName = 'mention';
 ButtonBlot.tagName = 'input';
-ButtonBlot.className = 'kuma-mention-node';
+ButtonBlot.className = 'quill-mention-node';
 export default ButtonBlot;

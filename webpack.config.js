@@ -13,7 +13,7 @@ function buildEntries() {
     if (dir === 'build')
       return entries;
 
-    var isDraft = dir.charAt(0) === '_';
+    var isDraft = dir.charAt(0) === '_' || dir.charAt(0) === '.';
 
     if (!isDraft && isDirectory(path.join(EXAMPLES_DIR, dir)))
       entries[dir] = path.join(EXAMPLES_DIR, dir, 'app.js');

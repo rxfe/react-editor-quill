@@ -1,8 +1,8 @@
-.kuma-mention {
+.quill-mention {
     position: relative
 }
 
-.kuma-mention-editor {
+.quill-mention-editor {
     padding: 8px 10px;
     width: 100%;
     height: 36px;
@@ -19,20 +19,20 @@
     transition: border .2s cubic-bezier(.645,.045,.355,1),background .2s cubic-bezier(.645,.045,.355,1),box-shadow .2s cubic-bezier(.645,.045,.355,1);
 }
 
-.kuma-mention-editor:focus {
+.quill-mention-editor:focus {
     border-color: #359cfc;
     color: #333;
     outline: 0
 }
 
-.kuma-mention-node {
+.quill-mention-node {
     padding: 0 2px;
     background: 0 0;
     border: 0;
     color: #3C99D8
 }
 
-.kuma-mention-panel {
+.quill-mention-panel {
     position: absolute;
     margin: 0;
     padding: 0;
@@ -51,11 +51,11 @@
     max-height: 250px;
 }
 
-.kuma-mention-panel-visible {
+.quill-mention-panel-visible {
     display: block
 }
 
-.kuma-mention-panel-item {
+.quill-mention-panel-item {
     display: block;
     cursor: pointer;
     padding: 6px 10px;
@@ -66,22 +66,22 @@
     max-width: 300px;
 }
 
-.kuma-mention-panel-item:first-child {
+.quill-mention-panel-item:first-child {
     border-top: 0 none
 }
 
-.kuma-mention-panel-item-current,.kuma-mention-panel-item:hover {
+.quill-mention-panel-item-current,.quill-mention-panel-item:hover {
     background-color: #dbeefe;
 }
 
-.kuma-mention-placeholder {
+.quill-mention-placeholder {
     position: absolute;
     top: 8px;
     left: 10px;
     color: rgba(0,0,0,.4)
 }
 
-input[type=button].kuma-mention-node {
+input[type=button].quill-mention-node {
     -webkit-appearance: button;
     cursor: pointer;
     outline: none;
@@ -90,4 +90,7 @@ input[type=button].kuma-mention-node {
 .ql-editor {
   overflow-y: auto;
   height: 200px;
+}
+.quill {
+  position: relative;
 }
