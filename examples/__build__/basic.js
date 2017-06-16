@@ -18,15 +18,15 @@ webpackJsonp([0,1],[
 
 	var _lib2 = _interopRequireDefault(_lib);
 
-	var _helloWorld = __webpack_require__(200);
+	var _count = __webpack_require__(200);
 
-	var _helloWorld2 = _interopRequireDefault(_helloWorld);
+	var _count2 = _interopRequireDefault(_count);
 
 	var _mention = __webpack_require__(201);
 
 	var _mention2 = _interopRequireDefault(_mention);
 
-	__webpack_require__(208);
+	__webpack_require__(207);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38,37 +38,21 @@ webpackJsonp([0,1],[
 	  });
 	};
 	var defaultModules = {
-	  toolbar: [[{ font: [] }, { size: [] }],
-	  // [{ font: [] }, { align: [] }, 'direction'],
-	  [{ align: [] }], [{ header: 1 }, { header: 2 }], ['bold', 'italic', 'underline', 'strike'], [{ color: [] }, { background: [] }], [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }], ['link', 'image'], ['clean']]
+	  toolbar: [[{ font: [] }, { size: [] }], [{ align: [] }, 'direction'], [{ header: 1 }, { header: 2 }], ['bold', 'italic', 'underline', 'strike'], [{ color: [] }, { background: [] }], [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }], ['link', 'image'], ['clean']]
 	};
-	var source = ['11111111111', '22222222222', '333333333333', '444444444444', '11111111111', '22222222222', '333333333333', '444444444444', '11111111111', '22222222222', '333333333333', '444444444444', '11111111111', '22222222222', '333333333333', '444444444444'];
-	var plugins = [_react2.default.createElement(_helloWorld2.default, null), _react2.default.createElement(_mention2.default, { source: source, formatter: formatter, module: defaultModules }), _react2.default.createElement(_mention2.default, { delimiter: '#', mentionFormatter: function mentionFormatter(data) {
+	var source = new Array(20).fill(1).map(function (i, j) {
+	  return j + 'asdfghjkl';
+	});
+	var plugins = [_react2.default.createElement(_count2.default, { limit: 100 }), _react2.default.createElement(_mention2.default, { source: source, formatter: formatter }), _react2.default.createElement(_mention2.default, { delimiter: '#', mentionFormatter: function mentionFormatter(data) {
 	    return '#' + data.text + '#';
-	  }, source: source, formatter: formatter, module: defaultModules })];
+	  }, source: source, formatter: formatter, insertMode: 'TEXT_NODE' })];
 	var appElement = document.getElementById('example');
 
 	_reactDom2.default.render(_react2.default.createElement(
 	  'div',
 	  null,
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins }),
-	  _react2.default.createElement('input', { type: 'text' })
+	  _react2.default.createElement(_lib2.default, { plugins: plugins, defaultValue: '@', modules: defaultModules }),
+	  _react2.default.createElement(_lib2.default, { plugins: plugins, defaultValue: '#', modules: defaultModules })
 	), appElement);
 
 /***/ }),
@@ -35715,6 +35699,16 @@ webpackJsonp([0,1],[
 	  value: true
 	});
 
+	var _extends = Object.assign || function (target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i];for (var key in source) {
+	      if (Object.prototype.hasOwnProperty.call(source, key)) {
+	        target[key] = source[key];
+	      }
+	    }
+	  }return target;
+	};
+
 	var _createClass = function () {
 	  function defineProperties(target, props) {
 	    for (var i = 0; i < props.length; i++) {
@@ -36025,7 +36019,7 @@ webpackJsonp([0,1],[
 
 	      return _react2.default.createElement('div', {
 	        id: this.props.id,
-	        style: this.props.style,
+	        style: _extends({ position: 'relative' }, this.props.style),
 	        key: this.state.generation,
 	        className: ['quill'].concat(this.props.className).join(' ')
 	      }, this.renderEditingArea(), _react2.default.createElement('div', { ref: function ref(target) {
@@ -38214,35 +38208,87 @@ webpackJsonp([0,1],[
 	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 	}
 
-	var HelloWorld = function (_Component) {
-	  _inherits(HelloWorld, _Component);
+	function getLength() {
+	  var ops = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
-	  function HelloWorld(props) {
-	    _classCallCheck(this, HelloWorld);
+	  var length = 0;
+	  ops.forEach(function (delta) {
+	    if (delta.insert && typeof delta.insert === 'string') {
+	      length += delta.insert.replace(/\s/g, '').length;
+	    } else {
+	      length += 1;
+	    }
+	  });
+	  return length;
+	}
 
-	    var _this = _possibleConstructorReturn(this, (HelloWorld.__proto__ || Object.getPrototypeOf(HelloWorld)).call(this, props));
+	var Label = function Label(_ref) {
+	  var count = _ref.count,
+	      limit = _ref.limit;
+
+	  var overCount = limit - count;
+	  return _react2.default.createElement('span', null, "\u5DF2\u7ECF\u8F93\u5165" + count + "\u4E2A\u5B57\u7B26,\n        " + (overCount < 0 ? "\u8D85\u51FA\u4E86" + Math.abs(overCount) : "\u8FD8\u80FD\u8F93\u5165" + overCount) + "\n      \u4E2A\u5B57\u7B26");
+	};
+	Label.propTypes = {
+	  count: _react.PropTypes.number.isRequired,
+	  limit: _react.PropTypes.number.isRequired
+	};
+
+	var Count = function (_Component) {
+	  _inherits(Count, _Component);
+
+	  function Count(props) {
+	    _classCallCheck(this, Count);
+
+	    var _this = _possibleConstructorReturn(this, (Count.__proto__ || Object.getPrototypeOf(Count)).call(this, props));
 
 	    _this.state = {
-	      value: 'hello world!'
+	      count: 0
 	    };
-	    console.log(_this.props.quill);
 	    return _this;
 	  }
 
-	  _createClass(HelloWorld, [{
+	  _createClass(Count, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var _this2 = this;
+
+	      this.props.quill.on('text-change', function () {
+	        var count = getLength(_this2.props.quill.getContents());
+	        _this2.setState({
+	          count: count
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'renderChildren',
+	    value: function renderChildren() {
+	      var count = this.state.count;
+	      var limit = this.props.limit;
+
+	      var child = this.props.children || _react2.default.createElement(Label, { count: count, limit: limit });
+	      var cp = {
+	        limit: limit,
+	        count: count
+	      };
+	      return _react2.default.cloneElement(child, cp);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      return _react2.default.createElement('span', null, this.state.value);
+	      return _react2.default.createElement('div', null, this.renderChildren());
 	    }
 	  }]);
 
-	  return HelloWorld;
+	  return Count;
 	}(_react.Component);
 
-	HelloWorld.propTypes = {
-	  quill: _react.PropTypes.objectOf(_react.PropTypes.any)
+	Count.propTypes = {
+	  quill: _react.PropTypes.objectOf(_react.PropTypes.any),
+	  limit: _react.PropTypes.number,
+	  children: _react.PropTypes.element
 	};
-	exports.default = HelloWorld;
+	exports.default = Count;
 
 /***/ }),
 /* 201 */
@@ -38294,19 +38340,15 @@ webpackJsonp([0,1],[
 
 	var _quill2 = _interopRequireDefault(_quill);
 
-	var _getPosition = __webpack_require__(203);
+	var _hasModule = __webpack_require__(203);
 
-	var _getPosition2 = _interopRequireDefault(_getPosition);
+	var _hasModule2 = _interopRequireDefault(_hasModule);
 
-	var _isQuillHasModule = __webpack_require__(204);
-
-	var _isQuillHasModule2 = _interopRequireDefault(_isQuillHasModule);
-
-	var _Panel = __webpack_require__(205);
+	var _Panel = __webpack_require__(204);
 
 	var _Panel2 = _interopRequireDefault(_Panel);
 
-	var _ButtonBlot = __webpack_require__(207);
+	var _ButtonBlot = __webpack_require__(206);
 
 	var _ButtonBlot2 = _interopRequireDefault(_ButtonBlot);
 
@@ -38384,16 +38426,17 @@ webpackJsonp([0,1],[
 	    value: function componentWillMount() {
 	      var _this2 = this;
 
-	      if (!(0, _isQuillHasModule2.default)(_quill2.default, 'formats/mention')) {
+	      if (!(0, _hasModule2.default)(_quill2.default, 'formats/mention')) {
 	        _quill2.default.register({ 'formats/mention': _ButtonBlot2.default });
 	      }
-	      if ((0, _isQuillHasModule2.default)(_quill2.default, 'modules/mentions')) {
+	      if ((0, _hasModule2.default)(_quill2.default, 'modules/mentions')) {
 	        return;
 	      }
 	      this.quill = this.props.quill;
 	      this.quill.on('selection-change', this.handleDefaultKeyup.bind(this));
 	      this.quill.root.addEventListener('blur', this.hidePanel.bind(this));
 	      this.quill.root.addEventListener('keydown', this.onKeydown.bind(this));
+	      this.quill.keyboard.bindings[13].unshift({ key: 13, shiftKey: null, handler: this.handleEnter.bind(this) });
 	      this.quill.root.addEventListener('keyup', function (e) {
 	        _this2.onKeyup(e);
 	        // this.onPanelKeyup(e)
@@ -38440,7 +38483,7 @@ webpackJsonp([0,1],[
 	            });
 	            break;
 	          case KEYCODE.ENTER:
-	            this.selectItem(mentionList[panelIdx]);
+	            // this.selectItem(mentionList[panelIdx]);
 	            break;
 	          default:
 	            this.setState({
@@ -38496,15 +38539,28 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'setPanelPos',
 	    value: function setPanelPos(pos) {
-	      var elTop = _getPosition2.default.getElementTop(this.quill.container.parentNode);
-	      var elLeft = _getPosition2.default.getElementLeft(this.quill.container.parentNode);
+	      var client = this.quill.container.parentNode.getBoundingClientRect();
 	      var position = {
-	        x: pos.left - elLeft,
-	        y: pos.top - (elTop - document.body.scrollTop) + 20
+	        x: pos.left - client.left,
+	        y: pos.top - client.top + 20
 	      };
 	      this.setState({
 	        cursorPosition: position
 	      });
+	    }
+	  }, {
+	    key: 'handleEnter',
+	    value: function handleEnter() {
+	      var _state2 = this.state,
+	          panelVisible = _state2.panelVisible,
+	          panelIdx = _state2.panelIdx,
+	          mentionList = _state2.mentionList;
+
+	      if (panelVisible) {
+	        this.selectItem(mentionList[panelIdx]);
+	        return false;
+	      }
+	      return true;
 	    }
 	  }, {
 	    key: 'matcher',
@@ -38610,7 +38666,14 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'insertWithTextNode',
 	    value: function insertWithTextNode(mentionContent) {
-	      console.log(this, mentionContent);
+	      this.quill.off('selection-change');
+	      if (this.STORE.bookmark) {
+	        this.quill.selection.setRange(this.STORE.bookmark);
+	      }
+	      this.quill.on('selection-change', this.handleDefaultKeyup.bind(this));
+	      var range = this.quill.getSelection(true);
+	      this.quill.updateContents(new Delta().retain(range.index).delete(range.length).insert(mentionContent).insert(' '));
+	      this.quill.setSelection(range.index + mentionContent.length + 1, 0);
 	    }
 	  }, {
 	    key: 'insert',
@@ -38762,47 +38825,6 @@ webpackJsonp([0,1],[
 /* 203 */
 /***/ (function(module, exports) {
 
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = {
-	  getElementLeft: function getElementLeft(element) {
-	    var actualLeft = element.offsetLeft;
-	    var current = element.offsetParent;
-	    while (current !== null) {
-	      actualLeft += current.offsetLeft;
-	      current = current.offsetParent;
-	    }
-	    return actualLeft;
-	  },
-	  getElementTop: function getElementTop(element) {
-	    var actualTop = element.offsetTop;
-	    var current = element.offsetParent;
-	    while (current !== null) {
-	      actualTop += current.offsetTop;
-	      current = current.offsetParent;
-	    }
-	    return actualTop;
-	  },
-	  getScrollTop: function getScrollTop() {
-	    var scrollPos = void 0;
-	    if (window.pageYOffset) {
-	      scrollPos = window.pageYOffset;
-	    } else if (document.compatMode && document.compatMode !== 'BackCompat') {
-	      scrollPos = document.documentElement.scrollTop;
-	    } else if (document.body) {
-	      scrollPos = document.body.scrollTop;
-	    }
-	    return scrollPos;
-	  }
-	};
-
-/***/ }),
-/* 204 */
-/***/ (function(module, exports) {
-
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
@@ -38820,20 +38842,32 @@ webpackJsonp([0,1],[
 	};
 
 /***/ }),
-/* 205 */
+/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(206);
+	var _classnames = __webpack_require__(205);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -38841,23 +38875,45 @@ webpackJsonp([0,1],[
 	  return obj && obj.__esModule ? obj : { default: obj };
 	}
 
-	var Panel = function Panel(_ref) {
-	  var onSelect = _ref.onSelect,
-	      list = _ref.list,
-	      style = _ref.style,
-	      visible = _ref.visible,
-	      idx = _ref.idx,
-	      formatter = _ref.formatter,
-	      prefixCls = _ref.prefixCls;
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
 
-	  var clsObj = {};
-	  clsObj[prefixCls + '-panel'] = true;
-	  clsObj[prefixCls + '-panel-visible'] = visible;
-	  var cls = (0, _classnames2.default)(clsObj);
-	  window.setTimeout(function () {
-	    try {
-	      var panel = document.querySelector('.kuma-mention-panel-visible');
-	      var current = document.querySelector('.kuma-mention-panel-item-current');
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+
+	var Panel = function (_React$Component) {
+	  _inherits(Panel, _React$Component);
+
+	  function Panel() {
+	    _classCallCheck(this, Panel);
+
+	    return _possibleConstructorReturn(this, (Panel.__proto__ || Object.getPrototypeOf(Panel)).apply(this, arguments));
+	  }
+
+	  _createClass(Panel, [{
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate(prevProps) {
+	      if (this.props.idx !== prevProps.idx) {
+	        this.maybeScrollItemIntoView();
+	      }
+	    }
+	  }, {
+	    key: 'maybeScrollItemIntoView',
+	    value: function maybeScrollItemIntoView() {
+	      var panel = this.panel;
+	      var current = this['item-' + this.props.idx];
 	      if (panel && current) {
 	        var clientHeight = panel.clientHeight;
 	        var curClientHeight = current.clientHeight;
@@ -38868,26 +38924,49 @@ webpackJsonp([0,1],[
 	          panel.scrollTop = offsetTop;
 	        }
 	      }
-	    } catch (error) {
-	      console.warn(error);
 	    }
-	  }, 0);
-	  return _react2.default.createElement('ul', { className: cls, style: style }, list.map(function (item, index) {
-	    var itemClsObj = {};
-	    itemClsObj[prefixCls + '-panel-item'] = true;
-	    itemClsObj[prefixCls + '-panel-item-current'] = idx === index;
-	    var itemCls = (0, _classnames2.default)(itemClsObj);
-	    return _react2.default.createElement('li', { // eslint-disable-line
-	      className: itemCls,
-	      key: item.id || index,
-	      onClick: function onClick() {
-	        return onSelect(item);
-	      }
-	    }, _react2.default.createElement('div', { dangerouslySetInnerHTML: { __html: formatter(item) } }));
-	  }));
-	};
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
 
-	Panel.displayName = 'quill-mention-panel';
+	      var _props = this.props,
+	          onSelect = _props.onSelect,
+	          list = _props.list,
+	          style = _props.style,
+	          visible = _props.visible,
+	          idx = _props.idx,
+	          formatter = _props.formatter,
+	          prefixCls = _props.prefixCls;
+
+	      var clsObj = {};
+	      clsObj[prefixCls + '-panel'] = true;
+	      clsObj[prefixCls + '-panel-visible'] = visible;
+	      var cls = (0, _classnames2.default)(clsObj);
+	      return _react2.default.createElement('ul', { className: cls, style: style, ref: function ref(e) {
+	          return _this2.panel = e;
+	        } }, list.map(function (item, index) {
+	        var itemClsObj = {};
+	        itemClsObj[prefixCls + '-panel-item'] = true;
+	        itemClsObj[prefixCls + '-panel-item-current'] = idx === index;
+	        var itemCls = (0, _classnames2.default)(itemClsObj);
+	        return _react2.default.createElement('li', { // eslint-disable-line
+	          className: itemCls,
+	          key: item.id || index,
+	          ref: function ref(e) {
+	            return _this2['item-' + index] = e;
+	          },
+	          onClick: function onClick() {
+	            return onSelect(item);
+	          }
+	        }, _react2.default.createElement('div', { dangerouslySetInnerHTML: { __html: formatter(item) } }));
+	      }));
+	    }
+	  }]);
+
+	  return Panel;
+	}(_react2.default.Component);
+
 	Panel.propTypes = {
 	  prefixCls: _react.PropTypes.string,
 	  list: _react.PropTypes.arrayOf(_react.PropTypes.any),
@@ -38905,11 +38984,10 @@ webpackJsonp([0,1],[
 	  onSelect: function onSelect() {},
 	  formatter: ''
 	};
-
 	exports.default = Panel;
 
 /***/ }),
-/* 206 */
+/* 205 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -38963,7 +39041,7 @@ webpackJsonp([0,1],[
 
 
 /***/ }),
-/* 207 */
+/* 206 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39080,13 +39158,13 @@ webpackJsonp([0,1],[
 	exports.default = ButtonBlot;
 
 /***/ }),
-/* 208 */
+/* 207 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(209);
+	var content = __webpack_require__(208);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -39111,7 +39189,7 @@ webpackJsonp([0,1],[
 	}
 
 /***/ }),
-/* 209 */
+/* 208 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(186)(undefined);
@@ -39119,7 +39197,7 @@ webpackJsonp([0,1],[
 
 
 	// module
-	exports.push([module.id, ".quill-mention {\n    position: relative\n}\n\n.quill-mention-editor {\n    padding: 8px 10px;\n    width: 100%;\n    height: 36px;\n    overflow-y: auto;\n    overflow-x: hidden;\n    font-size: 14px;\n    line-height: 1.42858;\n    border: 1px solid #ddd;\n    border-radius: 2px;\n    cursor: text;\n    color: #666;\n    background-color: #fff;\n    background-image: none;\n    transition: border .2s cubic-bezier(.645,.045,.355,1),background .2s cubic-bezier(.645,.045,.355,1),box-shadow .2s cubic-bezier(.645,.045,.355,1);\n}\n\n.quill-mention-editor:focus {\n    border-color: #359cfc;\n    color: #333;\n    outline: 0\n}\n\n.quill-mention-node {\n    padding: 0 2px;\n    background: 0 0;\n    border: 0;\n    color: #3C99D8\n}\n\n.quill-mention-panel {\n    position: absolute;\n    margin: 0;\n    padding: 0;\n    background-color: #fff;\n    border: 1px solid #ededed;\n    box-shadow: 1px 1px 3px rgba(0,0,0,.2);\n    display: none;\n    z-index: 99;\n    background: #fff;\n    border: 1px solid #ddd;\n    border-radius: 2px;\n    box-shadow: 0 0 4px hsla(0,0%,39%,.2);\n    line-height: 26px;\n    overflow: hidden;\n    overflow-y: auto;\n    max-height: 250px;\n}\n\n.quill-mention-panel-visible {\n    display: block\n}\n\n.quill-mention-panel-item {\n    display: block;\n    cursor: pointer;\n    padding: 6px 10px;\n    font-size: 1em;\n    cursor: pointer;\n    white-space: nowrap;\n    overflow: hidden;\n    max-width: 300px;\n}\n\n.quill-mention-panel-item:first-child {\n    border-top: 0 none\n}\n\n.quill-mention-panel-item-current,.quill-mention-panel-item:hover {\n    background-color: #dbeefe;\n}\n\n.quill-mention-placeholder {\n    position: absolute;\n    top: 8px;\n    left: 10px;\n    color: rgba(0,0,0,.4)\n}\n\ninput[type=button].quill-mention-node {\n    -webkit-appearance: button;\n    cursor: pointer;\n    outline: none;\n}\n\n.ql-editor {\n  overflow-y: auto;\n  height: 200px;\n}\n.quill {\n  position: relative;\n}\n", ""]);
+	exports.push([module.id, ".quill-mention {\n    position: relative\n}\n\n.quill-mention-editor {\n    padding: 8px 10px;\n    width: 100%;\n    height: 36px;\n    overflow-y: auto;\n    overflow-x: hidden;\n    font-size: 14px;\n    line-height: 1.42858;\n    border: 1px solid #ddd;\n    border-radius: 2px;\n    cursor: text;\n    color: #666;\n    background-color: #fff;\n    background-image: none;\n    transition: border .2s cubic-bezier(.645,.045,.355,1),background .2s cubic-bezier(.645,.045,.355,1),box-shadow .2s cubic-bezier(.645,.045,.355,1);\n}\n\n.quill-mention-editor:focus {\n    border-color: #359cfc;\n    color: #333;\n    outline: 0\n}\n\n.quill-mention-node {\n    padding: 0 2px;\n    background: 0 0;\n    border: 0;\n    color: #3C99D8\n}\n\n.quill-mention-panel {\n    position: absolute;\n    margin: 0;\n    padding: 0;\n    background-color: #fff;\n    border: 1px solid #ededed;\n    box-shadow: 1px 1px 3px rgba(0,0,0,.2);\n    display: none;\n    z-index: 99;\n    background: #fff;\n    border: 1px solid #ddd;\n    border-radius: 2px;\n    box-shadow: 0 0 4px hsla(0,0%,39%,.2);\n    line-height: 26px;\n    overflow: hidden;\n    overflow-y: auto;\n    max-height: 250px;\n}\n\n.quill-mention-panel-visible {\n    display: block\n}\n\n.quill-mention-panel-item {\n    display: block;\n    cursor: pointer;\n    padding: 6px 10px;\n    font-size: 1em;\n    cursor: pointer;\n    white-space: nowrap;\n    overflow: hidden;\n    max-width: 300px;\n}\n\n.quill-mention-panel-item:first-child {\n    border-top: 0 none\n}\n\n.quill-mention-panel-item-current,.quill-mention-panel-item:hover {\n    background-color: #dbeefe;\n}\n\n.quill-mention-placeholder {\n    position: absolute;\n    top: 8px;\n    left: 10px;\n    color: rgba(0,0,0,.4)\n}\n\ninput[type=button].quill-mention-node {\n    -webkit-appearance: button;\n    cursor: pointer;\n    outline: none;\n}\n\n.ql-editor {\n  /*overflow-y: auto;*/\n  /*height: 200px;*/\n}\n.quill {\n  height: 300px;\n  margin-bottom: 100px;\n}\n", ""]);
 
 	// exports
 

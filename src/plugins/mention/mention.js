@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Quill from 'quill';
-import getPosition from '../../utils/getPosition';
-import isQuillHasModule from '../../utils/isQuillHasModule';
+import isQuillHasModule from '../../utils/hasModule';
 import Panel from './Panel';
 import ButtonBlot from './ButtonBlot';
 
@@ -53,6 +52,7 @@ class QuillMention extends Component {
     this.quill.on('selection-change', this.handleDefaultKeyup.bind(this));
     this.quill.root.addEventListener('blur', this.hidePanel.bind(this));
     this.quill.root.addEventListener('keydown', this.onKeydown.bind(this));
+    this.quill.keyboard.bindings[13].unshift({ key: 13, shiftKey: null, handler: this.handleEnter.bind(this) });
     this.quill.root.addEventListener('keyup', (e) => {
       this.onKeyup(e);
       // this.onPanelKeyup(e)
@@ -74,7 +74,6 @@ class QuillMention extends Component {
       });
     }
   }
-
   onPanelKeyup (e) {
     const { panelVisible, panelIdx, mentionList } = this.state;
     if (panelVisible) {
@@ -91,7 +90,7 @@ class QuillMention extends Component {
           });
           break;
         case KEYCODE.ENTER:
-          this.selectItem(mentionList[panelIdx]);
+          // this.selectItem(mentionList[panelIdx]);
           break;
         default:
           this.setState({
@@ -140,15 +139,22 @@ class QuillMention extends Component {
   }
 
   setPanelPos (pos) {
-    const elTop = getPosition.getElementTop(this.quill.container.parentNode);
-    const elLeft = getPosition.getElementLeft(this.quill.container.parentNode);
+    const client = this.quill.container.parentNode.getBoundingClientRect();
     const position = {
-      x: pos.left - elLeft,
-      y: (pos.top - (elTop - document.body.scrollTop)) + 20,
+      x: pos.left - client.left,
+      y: (pos.top - client.top) + 20,
     };
     this.setState({
       cursorPosition: position,
     });
+  }
+  handleEnter () {
+    const { panelVisible, panelIdx, mentionList } = this.state;
+    if (panelVisible) {
+      this.selectItem(mentionList[panelIdx]);
+      return false;
+    }
+    return true;
   }
   matcher (str) {
     const { source, matchRange } = this.props;
@@ -236,7 +242,18 @@ class QuillMention extends Component {
   }
 
   insertWithTextNode (mentionContent) {
-    console.log(this, mentionContent);
+    this.quill.off('selection-change');
+    if (this.STORE.bookmark) {
+      this.quill.selection.setRange(this.STORE.bookmark);
+    }
+    this.quill.on('selection-change', this.handleDefaultKeyup.bind(this));
+    const range = this.quill.getSelection(true);
+    this.quill.updateContents(new Delta()
+      .retain(range.index)
+      .delete(range.length)
+      .insert(mentionContent)
+      .insert(' '));
+    this.quill.setSelection(range.index + mentionContent.length + 1, 0);
   }
   insert (mentionContent) {
     const { insertMode } = this.props;

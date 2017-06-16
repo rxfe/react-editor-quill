@@ -270,7 +270,7 @@ export default class Editor extends BaseEditor {
     return (
       <div
         id={this.props.id}
-        style={this.props.style}
+        style={{ position: 'relative', ...this.props.style }}
         key={this.state.generation}
         className={['quill'].concat(this.props.className).join(' ')}
       >
