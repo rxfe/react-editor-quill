@@ -176,9 +176,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var _this = _possibleConstructorReturn(this, (Editor.__proto__ || Object.getPrototypeOf(Editor)).call(this, props));
 
+	    var value = _this.isControlled() ? _this.props.value : _this.props.defaultValue;
 	    _this.state = {
 	      generation: 0,
-	      value: _this.isControlled() ? _this.props.value : _this.props.defaultValue
+	      value: value
 	    };
 	    return _this;
 	  }
@@ -202,7 +203,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        //       controlled and uncontrolled mode. We can't prevent
 	        //       the change, but we'll still override content
 	        //       whenever `value` differs from current state.
-	        if (nextProps.value !== this.getEditorContents()) {
+	        debugger;
+	        if (!(0, _lodash2.default)(nextProps.value, this.getEditorContents())) {
 	          this.setEditorContents(editor, nextProps.value);
 	        }
 	      }
@@ -336,6 +338,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this.state.selection;
 	    }
 	  }, {
+	    key: 'convertHtml',
+	    value: function convertHtml(html) {
+	      if (Array.isArray(html)) return html;
+	      return this.editor.clipboard.convert('<div class=\'ql-editor\' style="white-space: normal;">' + html + '<p><br></p></div>');
+	    }
+	  }, {
 	    key: 'renderPlugins',
 	    value: function renderPlugins(quill) {
 	      if (!this.pluginsTarget) return;
@@ -378,11 +386,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'onEditorChangeText',
 	    value: function onEditorChangeText(value, delta, source, editor) {
-	      if (value !== this.getEditorContents()) {
-	        this.setState({ value: value });
-	        if (this.props.onChange) {
-	          this.props.onChange(value, delta, source, editor);
-	        }
+	      var _this4 = this;
+
+	      debugger;
+	      if (delta.ops !== this.getEditorContents()) {
+	        this.setState({ value: delta.ops }, function () {
+	          if (_this4.props.onChange) {
+	            _this4.props.onChange(value, delta, source, editor);
+	          }
+	        });
 	      }
 	    }
 	  }, {
@@ -423,7 +435,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this4 = this;
+	      var _this5 = this;
 
 	      return _react2.default.createElement('div', {
 	        id: this.props.id,
@@ -431,7 +443,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: this.state.generation,
 	        className: ['quill'].concat(this.props.className).join(' ')
 	      }, this.renderEditingArea(), _react2.default.createElement('div', { ref: function ref(target) {
-	          return _this4.pluginsTarget = target;
+	          return _this5.pluginsTarget = target;
 	        } }));
 	    }
 	  }]);
@@ -445,8 +457,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	  theme: _react.PropTypes.string,
 	  style: _react.PropTypes.objectOf(_react.PropTypes.any),
 	  readOnly: _react.PropTypes.bool,
-	  value: _react.PropTypes.string,
-	  defaultValue: _react.PropTypes.string,
+	  value: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.array]),
+	  defaultValue: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.array]),
 	  placeholder: _react.PropTypes.string,
 	  bounds: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.element]),
 	  onKeyPress: _react.PropTypes.func,
@@ -2380,6 +2392,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _quill2 = _interopRequireDefault(_quill);
 
+	var _lodash = __webpack_require__(5);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
 	function _interopRequireDefault(obj) {
 	  return obj && obj.__esModule ? obj : { default: obj };
 	}
@@ -2432,8 +2448,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'setEditorContents',
 	    value: function setEditorContents(editor, value) {
+	      var delta = this.convertHtml(value);
+	      if ((0, _lodash2.default)(delta, editor.getContents())) return;
 	      var sel = editor.getSelection();
-	      editor.clipboard.dangerouslyPasteHTML(value || '');
+	      editor.setContents(delta || []);
 	      if (sel) this.setEditorSelection(editor, sel);
 	    }
 	  }, {

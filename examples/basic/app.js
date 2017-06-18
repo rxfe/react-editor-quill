@@ -27,8 +27,32 @@ const plugins = [<Count limit={100} />,
   <Meniton delimiter="#" mentionFormatter={data => `#${data.text}#`} source={source} formatter={formatter} insertMode="TEXT_NODE" />];
 const appElement = document.getElementById('example');
 
+class EditorContainer extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {
+      value1: [{ insert: '@' }],
+      value2: '#',
+    };
+  }
+  render () {
+    return (
+      <div>
+        <Editor
+          plugins={plugins}
+          value={this.state.value1}
+          modules={defaultModules}
+          onChange={(value, delta) => {
+            console.log(value, delta);
+            this.setState({
+              value1: delta.ops
+            });
+          }}
+        />
+        <Editor plugins={plugins} defaultValue="#" modules={defaultModules} />
+      </div>
+    );
+  }
+}
 
-ReactDOM.render(<div>
-  <Editor plugins={plugins} defaultValue="@" modules={defaultModules} />
-  <Editor plugins={plugins} defaultValue="#" modules={defaultModules} />
-</div>, appElement);
+ReactDOM.render(<EditorContainer />, appElement);

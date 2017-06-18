@@ -10,8 +10,8 @@ export default class Editor extends BaseEditor {
     theme: T.string,
     style: T.objectOf(T.any),
     readOnly: T.bool,
-    value: T.string,
-    defaultValue: T.string,
+    value: T.oneOfType([T.string, T.array]),
+    defaultValue: T.oneOfType([T.string, T.array]),
     placeholder: T.string,
     bounds: T.oneOfType([T.string, T.element]),
     onKeyPress: T.func,
@@ -52,11 +52,12 @@ export default class Editor extends BaseEditor {
   }
   constructor (props) {
     super(props);
+    const value = this.isControlled()
+        ? this.props.value
+        : this.props.defaultValue;
     this.state = {
       generation: 0,
-      value: this.isControlled()
-        ? this.props.value
-        : this.props.defaultValue
+      value
     };
   }
   componentWillReceiveProps (nextProps, nextState) {
@@ -76,7 +77,8 @@ export default class Editor extends BaseEditor {
       //       controlled and uncontrolled mode. We can't prevent
       //       the change, but we'll still override content
       //       whenever `value` differs from current state.
-      if (nextProps.value !== this.getEditorContents()) {
+      debugger
+      if (!isEqual(nextProps.value, this.getEditorContents())) {
         this.setEditorContents(editor, nextProps.value);
       }
     }
@@ -188,6 +190,10 @@ export default class Editor extends BaseEditor {
   getEditorSelection () {
     return this.state.selection;
   }
+  convertHtml (html) {
+    if (Array.isArray(html)) return html;
+    return this.editor.clipboard.convert(`<div class='ql-editor' style="white-space: normal;">${html}<p><br></p></div>`);
+  }
   renderPlugins (quill) {
     if (!this.pluginsTarget) return;
     ReactDOM.render(
@@ -227,11 +233,13 @@ export default class Editor extends BaseEditor {
     this.editor.focus();
   }
   onEditorChangeText (value, delta, source, editor) {
-    if (value !== this.getEditorContents()) {
-      this.setState({ value });
-      if (this.props.onChange) {
-        this.props.onChange(value, delta, source, editor);
-      }
+    debugger
+    if (delta.ops !== this.getEditorContents()) {
+      this.setState({ value: delta.ops }, () => {
+        if (this.props.onChange) {
+          this.props.onChange(value, delta, source, editor);
+        }
+      });
     }
   }
   onEditorChangeSelection (range, source, editor) {

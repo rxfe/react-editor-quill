@@ -1,5 +1,6 @@
 import React from 'react';
 import Quill from 'quill';
+import isEqual from 'lodash.isequal';
 
 export default class BaseEditor extends React.Component {
 
@@ -19,8 +20,10 @@ export default class BaseEditor extends React.Component {
   the cursor won't move.
   */
   setEditorContents (editor, value) {
+    const delta = this.convertHtml(value);
+    if (isEqual(delta, editor.getContents())) return;
     const sel = editor.getSelection();
-    editor.clipboard.dangerouslyPasteHTML(value || '');
+    editor.setContents(delta || []);
     if (sel) this.setEditorSelection(editor, sel);
   }
 
