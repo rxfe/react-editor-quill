@@ -59,7 +59,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.Quill = undefined;
 
 	var _quill = __webpack_require__(1);
 
@@ -87,7 +86,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	_quill2.default.register(new QuillStyle('font', 'font-family', styleOptions), true);
 
 	exports.default = _Editor2.default;
-	exports.Quill = _quill2.default;
 
 /***/ }),
 /* 1 */

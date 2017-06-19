@@ -12,5 +12,3 @@ Quill.register(new QuillStyle('size', 'font-size', styleOptions), true);
 Quill.register(new QuillStyle('font', 'font-family', styleOptions), true);
 
 export default Editor;
-
-export { Quill };

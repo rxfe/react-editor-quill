@@ -1,3 +1,3 @@
 # Summary
 
-* [Read Me](./README.md)
+* [Read Me](/README.md)
