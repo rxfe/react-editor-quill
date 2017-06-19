@@ -1,0 +1,31 @@
+{
+  "gitbook": ">=3.2.2",
+  "title": "react-editor-quill",
+  "root": "./docs",
+  "plugins": [
+    "codepen",
+    "edit-link",
+    "prism",
+    "-highlight",
+    "anchorjs",
+    "github"
+  ],
+  "pluginsConfig": {
+    "codepen": {
+      "height": 1000,
+      "defaultTab": "js"
+    },
+    "edit-link": {
+      "base": "https://github.com/rxfe/react-editor-quill/tree/master/docs",
+      "label": "Edit This Page"
+    },
+    "prism": {
+      "css": [
+        "prismjs/themes/prism-tomorrow.css"
+      ]
+    },
+    "github": {
+      "url": "https://github.com/rxfe/react-editor-quill"
+    }
+  }
+}

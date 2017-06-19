@@ -17,7 +17,7 @@
     "docs-dev": "npm-run-all docs:clean docs:prepare docs:build:watch",
     "docs:clean": "rimraf _book",
     "docs:prepare": "gitbook install",
-    "docs:build": "gitbook build -g reactjs/react-modal",
+    "docs:build": "gitbook build -g rxfe/react-editor-quill",
     "docs:build:watch": "gitbook serve",
     "docs:publish": "cd _book && git init && git commit --allow-empty -m 'update book' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -am 'update book' && git push git@github.com:rxfe/react-editor-quill.git gh-pages --force",
     "demo:publish": "cd examples && git init && git commit --allow-empty -m 'update examples' && git checkout -b gh-pages && touch .nojekyll && git add . && git commit -am 'update examples' && git push git@github.com:rxfe/react-editor-quill.git gh-pages --force",
@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ChasHong/react-editor-quill.git"
+    "url": "git+https://github.com/rxfe/react-editor-quill.git"
   },
   "author": "wencaicc@gmail.com",
   "devDependencies": {
@@ -77,6 +77,11 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
+    "gitbook-plugin-anchorjs": "^1.1.1",
+    "gitbook-plugin-codepen": "^0.1.2",
+    "gitbook-plugin-edit-link": "^2.0.2",
+    "gitbook-plugin-github": "^2.0.0",
+    "gitbook-plugin-prism": "^2.2.0",
     "lodash": "^4.17.4",
     "lodash.isequal": "^4.5.0",
     "lodash.some": "^4.6.0",
@@ -89,7 +94,7 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ChasHong/react-editor-quill/issues"
+    "url": "https://github.com/rxfe/react-editor-quill/issues"
   },
-  "homepage": "https://github.com/ChasHong/react-editor-quill#readme"
+  "homepage": "https://github.com/rxfe/react-editor-quill#readme"
 }

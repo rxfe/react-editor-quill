@@ -4,8 +4,6 @@ webpackJsonp([0,1],[
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -32,12 +30,6 @@ webpackJsonp([0,1],[
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 	var formatter = function formatter(data) {
 	  return data.map(function (item) {
 	    return {
@@ -56,49 +48,12 @@ webpackJsonp([0,1],[
 	  }, source: source, formatter: formatter, insertMode: 'TEXT_NODE' })];
 	var appElement = document.getElementById('example');
 
-	var EditorContainer = function (_React$Component) {
-	  _inherits(EditorContainer, _React$Component);
-
-	  function EditorContainer(props) {
-	    _classCallCheck(this, EditorContainer);
-
-	    var _this = _possibleConstructorReturn(this, (EditorContainer.__proto__ || Object.getPrototypeOf(EditorContainer)).call(this, props));
-
-	    _this.state = {
-	      value1: [{ insert: '@' }],
-	      value2: '#'
-	    };
-	    return _this;
-	  }
-
-	  _createClass(EditorContainer, [{
-	    key: 'render',
-	    value: function render() {
-	      var _this2 = this;
-
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(_lib2.default, {
-	          plugins: plugins,
-	          value: this.state.value1,
-	          modules: defaultModules,
-	          onChange: function onChange(value, delta) {
-	            console.log(value, delta);
-	            _this2.setState({
-	              value1: delta.ops
-	            });
-	          }
-	        }),
-	        _react2.default.createElement(_lib2.default, { plugins: plugins, defaultValue: '#', modules: defaultModules })
-	      );
-	    }
-	  }]);
-
-	  return EditorContainer;
-	}(_react2.default.Component);
-
-	_reactDom2.default.render(_react2.default.createElement(EditorContainer, null), appElement);
+	_reactDom2.default.render(_react2.default.createElement(
+	  'div',
+	  null,
+	  _react2.default.createElement(_lib2.default, { plugins: plugins, defaultValue: '@', modules: defaultModules }),
+	  _react2.default.createElement(_lib2.default, { plugins: plugins, defaultValue: '#', modules: defaultModules })
+	), appElement);
 
 /***/ }),
 /* 1 */
@@ -35813,10 +35768,9 @@ webpackJsonp([0,1],[
 
 	    var _this = _possibleConstructorReturn(this, (Editor.__proto__ || Object.getPrototypeOf(Editor)).call(this, props));
 
-	    var value = _this.isControlled() ? _this.props.value : _this.props.defaultValue;
 	    _this.state = {
 	      generation: 0,
-	      value: value
+	      value: _this.isControlled() ? _this.props.value : _this.props.defaultValue
 	    };
 	    return _this;
 	  }
@@ -35840,8 +35794,7 @@ webpackJsonp([0,1],[
 	        //       controlled and uncontrolled mode. We can't prevent
 	        //       the change, but we'll still override content
 	        //       whenever `value` differs from current state.
-	        debugger;
-	        if (!(0, _lodash2.default)(nextProps.value, this.getEditorContents())) {
+	        if (nextProps.value !== this.getEditorContents()) {
 	          this.setEditorContents(editor, nextProps.value);
 	        }
 	      }
@@ -35975,12 +35928,6 @@ webpackJsonp([0,1],[
 	      return this.state.selection;
 	    }
 	  }, {
-	    key: 'convertHtml',
-	    value: function convertHtml(html) {
-	      if (Array.isArray(html)) return html;
-	      return this.editor.clipboard.convert('<div class=\'ql-editor\' style="white-space: normal;">' + html + '<p><br></p></div>');
-	    }
-	  }, {
 	    key: 'renderPlugins',
 	    value: function renderPlugins(quill) {
 	      if (!this.pluginsTarget) return;
@@ -36023,15 +35970,11 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'onEditorChangeText',
 	    value: function onEditorChangeText(value, delta, source, editor) {
-	      var _this4 = this;
-
-	      debugger;
-	      if (delta.ops !== this.getEditorContents()) {
-	        this.setState({ value: delta.ops }, function () {
-	          if (_this4.props.onChange) {
-	            _this4.props.onChange(value, delta, source, editor);
-	          }
-	        });
+	      if (value !== this.getEditorContents()) {
+	        this.setState({ value: value });
+	        if (this.props.onChange) {
+	          this.props.onChange(value, delta, source, editor);
+	        }
 	      }
 	    }
 	  }, {
@@ -36072,7 +36015,7 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this5 = this;
+	      var _this4 = this;
 
 	      return _react2.default.createElement('div', {
 	        id: this.props.id,
@@ -36080,7 +36023,7 @@ webpackJsonp([0,1],[
 	        key: this.state.generation,
 	        className: ['quill'].concat(this.props.className).join(' ')
 	      }, this.renderEditingArea(), _react2.default.createElement('div', { ref: function ref(target) {
-	          return _this5.pluginsTarget = target;
+	          return _this4.pluginsTarget = target;
 	        } }));
 	    }
 	  }]);
@@ -36094,8 +36037,8 @@ webpackJsonp([0,1],[
 	  theme: _react.PropTypes.string,
 	  style: _react.PropTypes.objectOf(_react.PropTypes.any),
 	  readOnly: _react.PropTypes.bool,
-	  value: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.array]),
-	  defaultValue: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.array]),
+	  value: _react.PropTypes.string,
+	  defaultValue: _react.PropTypes.string,
 	  placeholder: _react.PropTypes.string,
 	  bounds: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.element]),
 	  onKeyPress: _react.PropTypes.func,
@@ -38017,10 +37960,6 @@ webpackJsonp([0,1],[
 
 	var _quill2 = _interopRequireDefault(_quill);
 
-	var _lodash = __webpack_require__(196);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
 	function _interopRequireDefault(obj) {
 	  return obj && obj.__esModule ? obj : { default: obj };
 	}
@@ -38073,10 +38012,8 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'setEditorContents',
 	    value: function setEditorContents(editor, value) {
-	      var delta = this.convertHtml(value);
-	      if ((0, _lodash2.default)(delta, editor.getContents())) return;
 	      var sel = editor.getSelection();
-	      editor.setContents(delta || []);
+	      editor.clipboard.dangerouslyPasteHTML(value || '');
 	      if (sel) this.setEditorSelection(editor, sel);
 	    }
 	  }, {
