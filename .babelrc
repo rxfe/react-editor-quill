@@ -1,4 +1,4 @@
 {
   "presets": ["react", "latest", "stage-2"],
-  "plugins": ["babel-plugin-transform-object-assign"]
+  "plugins": ["babel-plugin-transform-object-assign", "add-module-exports"]
 }
