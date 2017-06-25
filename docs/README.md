@@ -12,9 +12,12 @@ The following is an example of using react-editor-quill specifying all the possi
 import ReactEditor from 'react-editor-quill';
 
 <ReactEditor
-  value={}
-  defaultValue={}
-  onChange={}
+  value={this.state.value}
+  defaultValue={this.state.value}
+  onChange={(text, delta, source, editor) => {}}
+  onPaste={(event) => {}}
+  onChangeSelection={(range, source, editor) => {}}
+  onSelectImage={(file) => {}}
 />
 ```
 

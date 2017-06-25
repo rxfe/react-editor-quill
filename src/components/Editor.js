@@ -18,11 +18,13 @@ export default class Editor extends BaseEditor {
     onKeyDown: T.func,
     onKeyUp: T.func,
     onChange: T.func,
+    onPaste: T.func,
     onChangeSelection: T.func,
+    onSelectImage: T.func,
     modules: T.objectOf(T.any),
     formats: T.arrayOf(T.any),
     plugins: T.arrayOf(T.any),
-    children: T.element
+    children: T.element,
   }
   static dirtyProps = [
     'modules',
@@ -45,6 +47,8 @@ export default class Editor extends BaseEditor {
     'onKeyUp',
     'onChange',
     'onChangeSelection',
+    'onPaste',
+    'onSelectImage'
   ]
   static defaultProps = {
     theme: 'snow',
@@ -77,7 +81,6 @@ export default class Editor extends BaseEditor {
       //       controlled and uncontrolled mode. We can't prevent
       //       the change, but we'll still override content
       //       whenever `value` differs from current state.
-      debugger
       if (!isEqual(nextProps.value, this.getEditorContents())) {
         this.setEditorContents(editor, nextProps.value);
       }
@@ -102,6 +105,10 @@ export default class Editor extends BaseEditor {
       this.getEditingArea(),
       this.getEditorConfig()
     );
+    const toolbar = this.editor.getModule('toolbar');
+    if (this.props.onSelectImage) {
+      toolbar.addHandler('image', this.handlerImage.bind(this));
+    }
     if (this.props.plugins) {
       this.renderPlugins(this.editor);
     }
@@ -194,6 +201,24 @@ export default class Editor extends BaseEditor {
     if (Array.isArray(html)) return html;
     return this.editor.clipboard.convert(`<div class='ql-editor' style="white-space: normal;">${html}<p><br></p></div>`);
   }
+  handlerImage () {
+    const container = this.editor.container;
+    let fileInput = container.querySelector('input.ql-image[type=file]');
+    if (fileInput == null) {
+      fileInput = document.createElement('input');
+      fileInput.setAttribute('type', 'file');
+      fileInput.setAttribute('accept', 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon');
+      fileInput.classList.add('ql-image');
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files != null && fileInput.files[0] != null) {
+          const file = fileInput.files[0];
+          this.props.onSelectImage.call(this, file);
+        }
+      });
+      container.appendChild(fileInput);
+    }
+    fileInput.click();
+  }
   renderPlugins (quill) {
     if (!this.pluginsTarget) return;
     ReactDOM.render(
@@ -233,7 +258,6 @@ export default class Editor extends BaseEditor {
     this.editor.focus();
   }
   onEditorChangeText (value, delta, source, editor) {
-    debugger
     if (delta.ops !== this.getEditorContents()) {
       this.setState({ value: delta.ops }, () => {
         if (this.props.onChange) {
@@ -250,6 +274,12 @@ export default class Editor extends BaseEditor {
       if (this.props.onChangeSelection) {
         this.props.onChangeSelection(range, source, editor);
       }
+    }
+  }
+  onPaste (e) {
+    const { onPaste } = this.props;
+    if (onPaste) {
+      onPaste.call(this, e);
     }
   }
   /*
@@ -275,11 +305,15 @@ export default class Editor extends BaseEditor {
     return editingArea;
   }
   render () {
+    const { onKeyDown, onKeyPress, onKeyUp } = this.props;
     return (
       <div
         id={this.props.id}
         style={{ position: 'relative', ...this.props.style }}
         key={this.state.generation}
+        onKeyPress={onKeyDown}
+        onKeyDown={onKeyPress}
+        onKeyUp={onKeyUp}
         className={['quill'].concat(this.props.className).join(' ')}
       >
         {this.renderEditingArea()}

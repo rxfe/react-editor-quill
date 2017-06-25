@@ -66,9 +66,14 @@ export default class BaseEditor extends React.Component {
         );
       }
     }.bind(this);
-
+    this.handlePaste = function (e) {
+      if (this.onPaste) {
+        this.onPaste(e);
+      }
+    }.bind(this);
     editor.on('text-change', this.handleTextChange);
     editor.on('selection-change', this.handleSelectionChange);
+    editor.root.addEventListener('paste', this.handlePaste);
   }
 
   unhookEditor (editor) {
