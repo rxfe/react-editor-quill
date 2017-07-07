@@ -59,6 +59,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.Quill = undefined;
 
 	var _quill = __webpack_require__(1);
 
@@ -85,8 +86,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	_quill2.default.register(new QuillStyle('size', 'font-size', styleOptions), true);
 	_quill2.default.register(new QuillStyle('font', 'font-family', styleOptions), true);
 
+	exports.Quill = _quill2.default;
 	exports.default = _Editor2.default;
-	module.exports = exports['default'];
 
 /***/ }),
 /* 1 */
@@ -224,7 +225,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
+	      var self = this;
 	      this.editor = this.createEditor(this.getEditingArea(), this.getEditorConfig());
+	      this.editor.root.addEventListener('compositionend', function () {
+	        self.editor.selection.cursor.restore();
+	      });
 	      var toolbar = this.editor.getModule('toolbar');
 	      if (this.props.onSelectImage) {
 	        toolbar.addHandler('image', this.handlerImage.bind(this));
@@ -2631,19 +2636,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	var Cursor = _quill2.default.import('blots/cursor');
-	var restore = Cursor.prototype.restore;
-	Cursor.prototype.restore = function () {
-	  // if (this.selection.composing) return
-	  try {
-	    var tempComposing = this.selection.composing;
-	    this.selection.composing = false;
-	    restore.call(this);
-	    this.selection.composing = tempComposing;
-	  } catch (err) {
-	    console.log(err);
-	    return; // eslint-disable-line
-	  }
-	};
+	// const remove = Cursor.prototype.remove;
+	Cursor.prototype.remove = function () {};
+	// const restore = Cursor.prototype.restore;
+	// Cursor.prototype.restore = function () {
+	//   // if (this.selection.composing) return
+	//   try {
+	//     const tempComposing = this.selection.composing;
+	//     this.selection.composing = false;
+	//     restore.call(this);
+	//     this.selection.composing = tempComposing;
+	//   } catch (err) {
+	//     console.log(err);
+	//     return // eslint-disable-line
+	//   }
+	// };
 
 	exports.default = Cursor;
 	module.exports = exports['default'];
