@@ -24,8 +24,8 @@ export default class Editor extends BaseEditor {
     modules: T.objectOf(T.any),
     formats: T.arrayOf(T.any),
     plugins: T.arrayOf(T.any),
-    children: T.element,
-  }
+    children: T.element
+  };
   static dirtyProps = [
     'modules',
     'formats',
@@ -33,7 +33,7 @@ export default class Editor extends BaseEditor {
     'theme',
     'children',
     'plugins'
-  ]
+  ];
   /*
   Changing one of these props should cause a regular update.
   */
@@ -49,16 +49,16 @@ export default class Editor extends BaseEditor {
     'onChangeSelection',
     'onPaste',
     'onSelectImage'
-  ]
+  ];
   static defaultProps = {
     theme: 'snow',
     modules: {}
-  }
+  };
   constructor (props) {
     super(props);
     const value = this.isControlled()
-        ? this.props.value
-        : this.props.defaultValue;
+      ? this.props.value
+      : this.props.defaultValue;
     this.state = {
       generation: 0,
       value
@@ -101,10 +101,14 @@ export default class Editor extends BaseEditor {
     return false;
   }
   componentDidMount () {
+    const self = this;
     this.editor = this.createEditor(
       this.getEditingArea(),
       this.getEditorConfig()
     );
+    this.editor.root.addEventListener('compositionend', () => {
+      self.editor.selection.cursor.restore();
+    });
     const toolbar = this.editor.getModule('toolbar');
     if (this.props.onSelectImage) {
       toolbar.addHandler('image', this.handlerImage.bind(this));
@@ -139,19 +143,21 @@ export default class Editor extends BaseEditor {
     }
 
     // Compare props that require React updating the DOM.
-    return Editor.cleanProps.some(prop =>
-      // Note that `isEqual` compares deeply, making it safe to perform
-      // non-immutable updates, at the cost of performance.
-      !isEqual(nextProps[prop], this.props[prop])
+    return Editor.cleanProps.some(
+      prop =>
+        // Note that `isEqual` compares deeply, making it safe to perform
+        // non-immutable updates, at the cost of performance.
+        !isEqual(nextProps[prop], this.props[prop])
     );
   }
 
   shouldComponentRegenerate (nextProps) {
     // Whenever a `dirtyProp` changes, the editor needs reinstantiation.
-    return Editor.dirtyProps.some(prop =>
-      // Note that `isEqual` compares deeply, making it safe to perform
-      // non-immutable updates, at the cost of performance.
-      !isEqual(nextProps[prop], this.props[prop])
+    return Editor.dirtyProps.some(
+      prop =>
+        // Note that `isEqual` compares deeply, making it safe to perform
+        // non-immutable updates, at the cost of performance.
+        !isEqual(nextProps[prop], this.props[prop])
     );
   }
 
@@ -178,7 +184,7 @@ export default class Editor extends BaseEditor {
       modules: this.props.modules,
       placeholder: this.props.placeholder,
       readOnly: this.props.readOnly,
-      theme: this.props.theme,
+      theme: this.props.theme
     };
   }
 
@@ -199,7 +205,9 @@ export default class Editor extends BaseEditor {
   }
   convertHtml (html) {
     if (Array.isArray(html)) return html;
-    return this.editor.clipboard.convert(`<div class='ql-editor' style="white-space: normal;">${html}<p><br></p></div>`);
+    return this.editor.clipboard.convert(
+      `<div class='ql-editor' style="white-space: normal;">${html}<p><br></p></div>`
+    );
   }
   handlerImage () {
     const container = this.editor.container;
@@ -207,7 +215,10 @@ export default class Editor extends BaseEditor {
     if (fileInput == null) {
       fileInput = document.createElement('input');
       fileInput.setAttribute('type', 'file');
-      fileInput.setAttribute('accept', 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon');
+      fileInput.setAttribute(
+        'accept',
+        'image/png, image/gif, image/jpeg, image/bmp, image/x-icon'
+      );
       fileInput.classList.add('ql-image');
       fileInput.addEventListener('change', () => {
         if (fileInput.files != null && fileInput.files[0] != null) {
@@ -222,19 +233,16 @@ export default class Editor extends BaseEditor {
   renderPlugins (quill) {
     if (!this.pluginsTarget) return;
     ReactDOM.render(
-      (
-        <div>
-          {
-            React.Children.map(this.props.plugins, (plugin) => {
-              const cp = {
-                quill
-              };
-              return React.cloneElement(plugin, cp);
-            })
-          }
-        </div>
-      ),
-    this.pluginsTarget);
+      <div>
+        {React.Children.map(this.props.plugins, (plugin) => {
+          const cp = {
+            quill
+          };
+          return React.cloneElement(plugin, cp);
+        })}
+      </div>,
+      this.pluginsTarget
+    );
   }
   /*
   Regenerating the editor will cause the whole tree, including the container,
@@ -245,7 +253,7 @@ export default class Editor extends BaseEditor {
     this.quillDelta = this.editor.getContents();
     this.quillSelection = this.editor.getSelection();
     this.setState({
-      generation: this.state.generation + 1,
+      generation: this.state.generation + 1
     });
   }
   /*
@@ -291,7 +299,9 @@ export default class Editor extends BaseEditor {
 
     const properties = {
       key: this.state.generation,
-      ref (element) { self.editingArea = element; },
+      ref (element) {
+        self.editingArea = element;
+      }
     };
 
     const customElement = React.Children.count(children)
@@ -317,7 +327,7 @@ export default class Editor extends BaseEditor {
         className={['quill'].concat(this.props.className).join(' ')}
       >
         {this.renderEditingArea()}
-        <div ref={target => (this.pluginsTarget = target)} />
+        <div ref={target => this.pluginsTarget = target} />
       </div>
     );
   }

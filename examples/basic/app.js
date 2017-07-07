@@ -5,6 +5,7 @@ import 'quill/dist/quill.snow.css';
 import Editor from '../../lib/';
 import Count from '../../lib/plugins/count/';
 import Meniton from '../../lib/plugins/mention/';
+import deltaToHtml from '../../lib/utils/deltaToHtml';
 import './app.css';
 
 const Delta = Quill.import('delta');
@@ -54,11 +55,13 @@ function handlerPaste (evt) {
       reader.onload = function (event) {
         const range = editor.getSelection(true);
         // 更新编辑器内容
-        editor.updateContents(new Delta()
-          .retain(range.index)
-          .delete(range.length)
-          .insert({ image: event.target.result })
-        , 'user');
+        editor.updateContents(
+          new Delta()
+            .retain(range.index)
+            .delete(range.length)
+            .insert({ image: event.target.result }),
+          'user'
+        );
       };
       reader.readAsDataURL(file);
     }
@@ -69,8 +72,17 @@ function hanleSelectImage (file) {
 }
 ReactDOM.render(
   <div>
-    <Editor plugins={plugins} defaultValue="@" modules={defaultModules} onPaste={handlerPaste} onSelectImage={hanleSelectImage} />
+    <Editor
+      plugins={plugins}
+      defaultValue="@"
+      modules={defaultModules}
+      onPaste={handlerPaste}
+      onSelectImage={hanleSelectImage}
+    />
     <Editor plugins={plugins} defaultValue="#" modules={defaultModules} />
+    <div
+      dangerouslySetInnerHTML={{ __html: deltaToHtml([{ insert: '123' }]) }}
+    />
   </div>,
   appElement
 );
