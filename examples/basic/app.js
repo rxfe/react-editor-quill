@@ -5,6 +5,7 @@ import 'quill/dist/quill.snow.css';
 import Editor from '../../lib/';
 import Count from '../../lib/plugins/count/';
 import Meniton from '../../lib/plugins/mention/';
+import ImageUpload from '../../lib/plugins/imageUpload';
 import deltaToHtml from '../../lib/utils/deltaToHtml';
 import './app.css';
 
@@ -40,33 +41,11 @@ const plugins = [
     source={source}
     formatter={formatter}
     insertMode="TEXT_NODE"
-  />
+  />,
+  <ImageUpload />
 ];
 const appElement = document.getElementById('example');
-function handlerPaste (evt) {
-  const editor = this.editor;
-  const clipboardData = evt.clipboardData;
-  if (!clipboardData || !clipboardData.items) return;
-  for (let i = 0; i < clipboardData.items.length; i++) {
-    const item = clipboardData.items[i];
-    if (item.kind === 'file' && item.type.match(/^image\//i)) {
-      const file = item.getAsFile(); // 获取文件后可直接上传
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        const range = editor.getSelection(true);
-        // 更新编辑器内容
-        editor.updateContents(
-          new Delta()
-            .retain(range.index)
-            .delete(range.length)
-            .insert({ image: event.target.result }),
-          'user'
-        );
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-}
+
 function hanleSelectImage (file) {
   console.log(file);
 }
@@ -76,7 +55,6 @@ ReactDOM.render(
       plugins={plugins}
       defaultValue="@"
       modules={defaultModules}
-      onPaste={handlerPaste}
       onSelectImage={hanleSelectImage}
     />
     <Editor plugins={plugins} defaultValue="#" modules={defaultModules} />
