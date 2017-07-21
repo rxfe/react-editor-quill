@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import Editor from '../../lib/';
 import Count from '../../lib/plugins/count/';
@@ -9,7 +8,6 @@ import ImageUpload from '../../lib/plugins/imageUpload';
 import deltaToHtml from '../../lib/utils/deltaToHtml';
 import './app.css';
 
-const Delta = Quill.import('delta');
 const formatter = data =>
   data.map(item => ({
     text: `${item}`
@@ -42,20 +40,31 @@ const plugins = [
     formatter={formatter}
     insertMode="TEXT_NODE"
   />,
-  <ImageUpload />
+  <ImageUpload
+    uploadFile={file =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const result = event.target.result;
+          setTimeout(() => {
+            resolve({ src: result });
+          }, 1000);
+        };
+        reader.onerror = (error) => {
+          reject(error);
+        };
+        reader.readAsDataURL(file);
+      })}
+  />
 ];
 const appElement = document.getElementById('example');
 
-function hanleSelectImage (file) {
-  console.log(file);
-}
 ReactDOM.render(
   <div>
     <Editor
       plugins={plugins}
       defaultValue="@"
       modules={defaultModules}
-      onSelectImage={hanleSelectImage}
     />
     <Editor plugins={plugins} defaultValue="#" modules={defaultModules} />
     <div

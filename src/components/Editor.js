@@ -109,10 +109,6 @@ export default class Editor extends BaseEditor {
     this.editor.root.addEventListener('compositionend', () => {
       self.editor.selection.cursor.restore();
     });
-    const toolbar = this.editor.getModule('toolbar');
-    if (this.props.onSelectImage) {
-      toolbar.addHandler('image', this.handlerImage.bind(this));
-    }
     if (this.props.plugins) {
       this.renderPlugins(this.editor);
     }
@@ -209,27 +205,7 @@ export default class Editor extends BaseEditor {
       `<div class='ql-editor' style="white-space: normal;">${html}<p><br></p></div>`
     );
   }
-  handlerImage () {
-    const container = this.editor.container;
-    let fileInput = container.querySelector('input.ql-image[type=file]');
-    if (fileInput == null) {
-      fileInput = document.createElement('input');
-      fileInput.setAttribute('type', 'file');
-      fileInput.setAttribute(
-        'accept',
-        'image/png, image/gif, image/jpeg, image/bmp, image/x-icon'
-      );
-      fileInput.classList.add('ql-image');
-      fileInput.addEventListener('change', () => {
-        if (fileInput.files != null && fileInput.files[0] != null) {
-          const file = fileInput.files[0];
-          this.props.onSelectImage.call(this, file);
-        }
-      });
-      container.appendChild(fileInput);
-    }
-    fileInput.click();
-  }
+
   renderPlugins (quill) {
     if (!this.pluginsTarget) return;
     ReactDOM.render(

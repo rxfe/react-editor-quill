@@ -11,6 +11,6 @@ const styleOptions = { scope: Parchment.Scope.INLINE };
 Quill.register(new QuillStyle('size', 'font-size', styleOptions), true);
 Quill.register(new QuillStyle('font', 'font-family', styleOptions), true);
 
-export { Quill };
+// export { Quill };
 
 export default Editor;

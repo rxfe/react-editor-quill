@@ -1,4 +1,4 @@
-import { Quill } from '../index';
+import Quill from 'quill';
 
 const tempCont = document.createElement('div');
 

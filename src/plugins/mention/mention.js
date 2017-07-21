@@ -1,9 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import Quill from 'quill';
-import isQuillHasModule from '../../utils/hasModule';
 import Panel from './Panel';
+import isQuillHasModule from '../../utils/hasModule';
 import ButtonBlot from './ButtonBlot';
 
+if (!isQuillHasModule(Quill, 'formats/mention')) {
+  Quill.register({
+    'formats/mention': ButtonBlot
+  });
+}
 const Delta = Quill.import('delta');
 
 const KEYCODE = {
@@ -42,10 +47,8 @@ class QuillMention extends Component {
     this.selectItem = this.selectItem.bind(this);
   }
   componentWillMount () {
-    if (!isQuillHasModule(Quill, 'formats/mention')) {
-      Quill.register({ 'formats/mention': ButtonBlot });
-    }
     if (isQuillHasModule(Quill, 'modules/mentions')) {
+      console.warn('need register mention blot!');
       return;
     }
     this.quill = this.props.quill;
