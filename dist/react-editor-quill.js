@@ -59,7 +59,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.Quill = undefined;
 
 	var _quill = __webpack_require__(1);
 
@@ -86,8 +85,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	_quill2.default.register(new QuillStyle('size', 'font-size', styleOptions), true);
 	_quill2.default.register(new QuillStyle('font', 'font-family', styleOptions), true);
 
-	exports.Quill = _quill2.default;
+	// export { Quill };
+
 	exports.default = _Editor2.default;
+	module.exports = exports['default'];
 
 /***/ }),
 /* 1 */
@@ -230,10 +231,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this.editor.root.addEventListener('compositionend', function () {
 	        self.editor.selection.cursor.restore();
 	      });
-	      var toolbar = this.editor.getModule('toolbar');
-	      if (this.props.onSelectImage) {
-	        toolbar.addHandler('image', this.handlerImage.bind(this));
-	      }
 	      if (this.props.plugins) {
 	        this.renderPlugins(this.editor);
 	      }
@@ -351,28 +348,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return this.editor.clipboard.convert('<div class=\'ql-editor\' style="white-space: normal;">' + html + '<p><br></p></div>');
 	    }
 	  }, {
-	    key: 'handlerImage',
-	    value: function handlerImage() {
-	      var _this4 = this;
-
-	      var container = this.editor.container;
-	      var fileInput = container.querySelector('input.ql-image[type=file]');
-	      if (fileInput == null) {
-	        fileInput = document.createElement('input');
-	        fileInput.setAttribute('type', 'file');
-	        fileInput.setAttribute('accept', 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon');
-	        fileInput.classList.add('ql-image');
-	        fileInput.addEventListener('change', function () {
-	          if (fileInput.files != null && fileInput.files[0] != null) {
-	            var file = fileInput.files[0];
-	            _this4.props.onSelectImage.call(_this4, file);
-	          }
-	        });
-	        container.appendChild(fileInput);
-	      }
-	      fileInput.click();
-	    }
-	  }, {
 	    key: 'renderPlugins',
 	    value: function renderPlugins(quill) {
 	      if (!this.pluginsTarget) return;
@@ -415,12 +390,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'onEditorChangeText',
 	    value: function onEditorChangeText(value, delta, source, editor) {
-	      var _this5 = this;
+	      var _this4 = this;
 
 	      if (delta.ops !== this.getEditorContents()) {
 	        this.setState({ value: delta.ops }, function () {
-	          if (_this5.props.onChange) {
-	            _this5.props.onChange(value, delta, source, editor);
+	          if (_this4.props.onChange) {
+	            _this4.props.onChange(value, delta, source, editor);
 	          }
 	        });
 	      }
@@ -472,7 +447,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this6 = this;
+	      var _this5 = this;
 
 	      var _props = this.props,
 	          onKeyDown = _props.onKeyDown,
@@ -488,7 +463,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        onKeyUp: onKeyUp,
 	        className: ['quill'].concat(this.props.className).join(' ')
 	      }, this.renderEditingArea(), _react2.default.createElement('div', { ref: function ref(target) {
-	          return _this6.pluginsTarget = target;
+	          return _this5.pluginsTarget = target;
 	        } }));
 	    }
 	  }]);
