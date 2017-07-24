@@ -26,7 +26,15 @@ webpackJsonp([0,1],[
 
 	var _mention2 = _interopRequireDefault(_mention);
 
-	__webpack_require__(207);
+	var _imageUpload = __webpack_require__(207);
+
+	var _imageUpload2 = _interopRequireDefault(_imageUpload);
+
+	var _deltaToHtml = __webpack_require__(209);
+
+	var _deltaToHtml2 = _interopRequireDefault(_deltaToHtml);
+
+	__webpack_require__(210);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -43,16 +51,45 @@ webpackJsonp([0,1],[
 	var source = new Array(20).fill(1).map(function (i, j) {
 	  return j + 'asdfghjkl';
 	});
-	var plugins = [_react2.default.createElement(_count2.default, { limit: 100 }), _react2.default.createElement(_mention2.default, { source: source, formatter: formatter }), _react2.default.createElement(_mention2.default, { delimiter: '#', mentionFormatter: function mentionFormatter(data) {
+	var plugins = [_react2.default.createElement(_count2.default, { limit: 100 }), _react2.default.createElement(_mention2.default, { source: source, formatter: formatter }), _react2.default.createElement(_mention2.default, {
+	  delimiter: '#',
+	  mentionFormatter: function mentionFormatter(data) {
 	    return '#' + data.text + '#';
-	  }, source: source, formatter: formatter, insertMode: 'TEXT_NODE' })];
+	  },
+	  source: source,
+	  formatter: formatter,
+	  insertMode: 'TEXT_NODE'
+	}), _react2.default.createElement(_imageUpload2.default, {
+	  uploadFile: function uploadFile(file) {
+	    return new Promise(function (resolve, reject) {
+	      var reader = new FileReader();
+	      reader.onload = function (event) {
+	        var result = event.target.result;
+	        setTimeout(function () {
+	          resolve({ src: result });
+	        }, 1000);
+	      };
+	      reader.onerror = function (error) {
+	        reject(error);
+	      };
+	      reader.readAsDataURL(file);
+	    });
+	  }
+	})];
 	var appElement = document.getElementById('example');
 
 	_reactDom2.default.render(_react2.default.createElement(
 	  'div',
 	  null,
-	  _react2.default.createElement(_lib2.default, { plugins: plugins, defaultValue: '@', modules: defaultModules }),
-	  _react2.default.createElement(_lib2.default, { plugins: plugins, defaultValue: '#', modules: defaultModules })
+	  _react2.default.createElement(_lib2.default, {
+	    plugins: plugins,
+	    defaultValue: '@',
+	    modules: defaultModules
+	  }),
+	  _react2.default.createElement(_lib2.default, { plugins: plugins, defaultValue: '#', modules: defaultModules }),
+	  _react2.default.createElement('div', {
+	    dangerouslySetInnerHTML: { __html: (0, _deltaToHtml2.default)([{ insert: '123' }]) }
+	  })
 	), appElement);
 
 /***/ }),
@@ -22627,7 +22664,6 @@ webpackJsonp([0,1],[
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.Quill = undefined;
 
 	var _quill = __webpack_require__(190);
 
@@ -22654,8 +22690,10 @@ webpackJsonp([0,1],[
 	_quill2.default.register(new QuillStyle('size', 'font-size', styleOptions), true);
 	_quill2.default.register(new QuillStyle('font', 'font-family', styleOptions), true);
 
+	// export { Quill };
+
 	exports.default = _Editor2.default;
-	exports.Quill = _quill2.default;
+	module.exports = exports['default'];
 
 /***/ }),
 /* 190 */
@@ -35768,9 +35806,10 @@ webpackJsonp([0,1],[
 
 	    var _this = _possibleConstructorReturn(this, (Editor.__proto__ || Object.getPrototypeOf(Editor)).call(this, props));
 
+	    var value = _this.isControlled() ? _this.props.value : _this.props.defaultValue;
 	    _this.state = {
 	      generation: 0,
-	      value: _this.isControlled() ? _this.props.value : _this.props.defaultValue
+	      value: value
 	    };
 	    return _this;
 	  }
@@ -35794,7 +35833,7 @@ webpackJsonp([0,1],[
 	        //       controlled and uncontrolled mode. We can't prevent
 	        //       the change, but we'll still override content
 	        //       whenever `value` differs from current state.
-	        if (nextProps.value !== this.getEditorContents()) {
+	        if (!(0, _lodash2.default)(nextProps.value, this.getEditorContents())) {
 	          this.setEditorContents(editor, nextProps.value);
 	        }
 	      }
@@ -35816,7 +35855,11 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
+	      var self = this;
 	      this.editor = this.createEditor(this.getEditingArea(), this.getEditorConfig());
+	      this.editor.root.addEventListener('compositionend', function () {
+	        self.editor.selection.cursor.restore();
+	      });
 	      if (this.props.plugins) {
 	        this.renderPlugins(this.editor);
 	      }
@@ -35928,6 +35971,12 @@ webpackJsonp([0,1],[
 	      return this.state.selection;
 	    }
 	  }, {
+	    key: 'convertHtml',
+	    value: function convertHtml(html) {
+	      if (Array.isArray(html)) return html;
+	      return this.editor.clipboard.convert('<div class=\'ql-editor\' style="white-space: normal;">' + html + '<p><br></p></div>');
+	    }
+	  }, {
 	    key: 'renderPlugins',
 	    value: function renderPlugins(quill) {
 	      if (!this.pluginsTarget) return;
@@ -35970,11 +36019,14 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'onEditorChangeText',
 	    value: function onEditorChangeText(value, delta, source, editor) {
-	      if (value !== this.getEditorContents()) {
-	        this.setState({ value: value });
-	        if (this.props.onChange) {
-	          this.props.onChange(value, delta, source, editor);
-	        }
+	      var _this4 = this;
+
+	      if (delta.ops !== this.getEditorContents()) {
+	        this.setState({ value: delta.ops }, function () {
+	          if (_this4.props.onChange) {
+	            _this4.props.onChange(value, delta, source, editor);
+	          }
+	        });
 	      }
 	    }
 	  }, {
@@ -35987,6 +36039,15 @@ webpackJsonp([0,1],[
 	        if (this.props.onChangeSelection) {
 	          this.props.onChangeSelection(range, source, editor);
 	        }
+	      }
+	    }
+	  }, {
+	    key: 'onPaste',
+	    value: function onPaste(e) {
+	      var onPaste = this.props.onPaste;
+
+	      if (onPaste) {
+	        onPaste.call(this, e);
 	      }
 	    }
 	    /*
@@ -36015,15 +36076,23 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this4 = this;
+	      var _this5 = this;
+
+	      var _props = this.props,
+	          onKeyDown = _props.onKeyDown,
+	          onKeyPress = _props.onKeyPress,
+	          onKeyUp = _props.onKeyUp;
 
 	      return _react2.default.createElement('div', {
 	        id: this.props.id,
 	        style: _extends({ position: 'relative' }, this.props.style),
 	        key: this.state.generation,
+	        onKeyPress: onKeyDown,
+	        onKeyDown: onKeyPress,
+	        onKeyUp: onKeyUp,
 	        className: ['quill'].concat(this.props.className).join(' ')
 	      }, this.renderEditingArea(), _react2.default.createElement('div', { ref: function ref(target) {
-	          return _this4.pluginsTarget = target;
+	          return _this5.pluginsTarget = target;
 	        } }));
 	    }
 	  }]);
@@ -36037,27 +36106,30 @@ webpackJsonp([0,1],[
 	  theme: _react.PropTypes.string,
 	  style: _react.PropTypes.objectOf(_react.PropTypes.any),
 	  readOnly: _react.PropTypes.bool,
-	  value: _react.PropTypes.string,
-	  defaultValue: _react.PropTypes.string,
+	  value: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.array]),
+	  defaultValue: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.array]),
 	  placeholder: _react.PropTypes.string,
 	  bounds: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.element]),
 	  onKeyPress: _react.PropTypes.func,
 	  onKeyDown: _react.PropTypes.func,
 	  onKeyUp: _react.PropTypes.func,
 	  onChange: _react.PropTypes.func,
+	  onPaste: _react.PropTypes.func,
 	  onChangeSelection: _react.PropTypes.func,
+	  onSelectImage: _react.PropTypes.func,
 	  modules: _react.PropTypes.objectOf(_react.PropTypes.any),
 	  formats: _react.PropTypes.arrayOf(_react.PropTypes.any),
 	  plugins: _react.PropTypes.arrayOf(_react.PropTypes.any),
 	  children: _react.PropTypes.element
 	};
 	Editor.dirtyProps = ['modules', 'formats', 'bounds', 'theme', 'children', 'plugins'];
-	Editor.cleanProps = ['id', 'className', 'style', 'placeholder', 'onKeyPress', 'onKeyDown', 'onKeyUp', 'onChange', 'onChangeSelection'];
+	Editor.cleanProps = ['id', 'className', 'style', 'placeholder', 'onKeyPress', 'onKeyDown', 'onKeyUp', 'onChange', 'onChangeSelection', 'onPaste', 'onSelectImage'];
 	Editor.defaultProps = {
 	  theme: 'snow',
 	  modules: {}
 	};
 	exports.default = Editor;
+	module.exports = exports['default'];
 
 /***/ }),
 /* 196 */
@@ -37960,6 +38032,10 @@ webpackJsonp([0,1],[
 
 	var _quill2 = _interopRequireDefault(_quill);
 
+	var _lodash = __webpack_require__(196);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
 	function _interopRequireDefault(obj) {
 	  return obj && obj.__esModule ? obj : { default: obj };
 	}
@@ -38012,8 +38088,10 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'setEditorContents',
 	    value: function setEditorContents(editor, value) {
+	      var delta = this.convertHtml(value);
+	      if ((0, _lodash2.default)(delta, editor.getContents())) return;
 	      var sel = editor.getSelection();
-	      editor.clipboard.dangerouslyPasteHTML(value || '');
+	      editor.setContents(delta || []);
 	      if (sel) this.setEditorSelection(editor, sel);
 	    }
 	  }, {
@@ -38054,9 +38132,14 @@ webpackJsonp([0,1],[
 	          this.onEditorChangeSelection(range, source, unprivilegedEditor);
 	        }
 	      }.bind(this);
-
+	      this.handlePaste = function (e) {
+	        if (this.onPaste) {
+	          this.onPaste(e);
+	        }
+	      }.bind(this);
 	      editor.on('text-change', this.handleTextChange);
 	      editor.on('selection-change', this.handleSelectionChange);
+	      editor.root.addEventListener('paste', this.handlePaste);
 	    }
 	  }, {
 	    key: 'unhookEditor',
@@ -38124,6 +38207,7 @@ webpackJsonp([0,1],[
 	}(_react2.default.Component);
 
 	exports.default = BaseEditor;
+	module.exports = exports['default'];
 
 /***/ }),
 /* 199 */
@@ -38144,21 +38228,24 @@ webpackJsonp([0,1],[
 	}
 
 	var Cursor = _quill2.default.import('blots/cursor');
-	var restore = Cursor.prototype.restore;
-	Cursor.prototype.restore = function () {
-	  // if (this.selection.composing) return
-	  try {
-	    var tempComposing = this.selection.composing;
-	    this.selection.composing = false;
-	    restore.call(this);
-	    this.selection.composing = tempComposing;
-	  } catch (err) {
-	    console.log(err);
-	    return; // eslint-disable-line
-	  }
-	};
+	// const remove = Cursor.prototype.remove;
+	Cursor.prototype.remove = function () {};
+	// const restore = Cursor.prototype.restore;
+	// Cursor.prototype.restore = function () {
+	//   // if (this.selection.composing) return
+	//   try {
+	//     const tempComposing = this.selection.composing;
+	//     this.selection.composing = false;
+	//     restore.call(this);
+	//     this.selection.composing = tempComposing;
+	//   } catch (err) {
+	//     console.log(err);
+	//     return // eslint-disable-line
+	//   }
+	// };
 
 	exports.default = Cursor;
+	module.exports = exports['default'];
 
 /***/ }),
 /* 200 */
@@ -38289,6 +38376,7 @@ webpackJsonp([0,1],[
 	  children: _react.PropTypes.element
 	};
 	exports.default = Count;
+	module.exports = exports['default'];
 
 /***/ }),
 /* 201 */
@@ -38309,6 +38397,7 @@ webpackJsonp([0,1],[
 	}
 
 	exports.default = _mention2.default;
+	module.exports = exports['default'];
 
 /***/ }),
 /* 202 */
@@ -38340,13 +38429,13 @@ webpackJsonp([0,1],[
 
 	var _quill2 = _interopRequireDefault(_quill);
 
-	var _hasModule = __webpack_require__(203);
-
-	var _hasModule2 = _interopRequireDefault(_hasModule);
-
-	var _Panel = __webpack_require__(204);
+	var _Panel = __webpack_require__(203);
 
 	var _Panel2 = _interopRequireDefault(_Panel);
+
+	var _hasModule = __webpack_require__(205);
+
+	var _hasModule2 = _interopRequireDefault(_hasModule);
 
 	var _ButtonBlot = __webpack_require__(206);
 
@@ -38374,6 +38463,11 @@ webpackJsonp([0,1],[
 	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 	}
 
+	if (!(0, _hasModule2.default)(_quill2.default, 'formats/mention')) {
+	  _quill2.default.register({
+	    'formats/mention': _ButtonBlot2.default
+	  });
+	}
 	var Delta = _quill2.default.import('delta');
 
 	var KEYCODE = {
@@ -38426,10 +38520,8 @@ webpackJsonp([0,1],[
 	    value: function componentWillMount() {
 	      var _this2 = this;
 
-	      if (!(0, _hasModule2.default)(_quill2.default, 'formats/mention')) {
-	        _quill2.default.register({ 'formats/mention': _ButtonBlot2.default });
-	      }
 	      if ((0, _hasModule2.default)(_quill2.default, 'modules/mentions')) {
+	        console.warn('need register mention blot!');
 	        return;
 	      }
 	      this.quill = this.props.quill;
@@ -38820,29 +38912,10 @@ webpackJsonp([0,1],[
 	  insertMode: 'ELEMENT_NODE'
 	};
 	exports.default = QuillMention;
+	module.exports = exports['default'];
 
 /***/ }),
 /* 203 */
-/***/ (function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	exports.default = function (quill, modulePath) {
-	  var result = void 0;
-	  try {
-	    result = quill.imports[modulePath];
-	  } catch (err) {
-	    result = null;
-	  }
-	  return !!result;
-	};
-
-/***/ }),
-/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38867,7 +38940,7 @@ webpackJsonp([0,1],[
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(205);
+	var _classnames = __webpack_require__(204);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -38985,9 +39058,10 @@ webpackJsonp([0,1],[
 	  formatter: ''
 	};
 	exports.default = Panel;
+	module.exports = exports['default'];
 
 /***/ }),
-/* 205 */
+/* 204 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -39039,6 +39113,28 @@ webpackJsonp([0,1],[
 		}
 	}());
 
+
+/***/ }),
+/* 205 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	exports.default = function (quill, modulePath) {
+	  var result = void 0;
+	  try {
+	    result = quill.imports[modulePath];
+	  } catch (err) {
+	    result = null;
+	  }
+	  return !!result;
+	};
+
+	module.exports = exports["default"];
 
 /***/ }),
 /* 206 */
@@ -39156,15 +39252,185 @@ webpackJsonp([0,1],[
 	ButtonBlot.tagName = 'input';
 	ButtonBlot.className = 'quill-mention-node';
 	exports.default = ButtonBlot;
+	module.exports = exports['default'];
 
 /***/ }),
 /* 207 */
 /***/ (function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _imageUpload = __webpack_require__(208);
+
+	var _imageUpload2 = _interopRequireDefault(_imageUpload);
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+
+	exports.default = _imageUpload2.default;
+	module.exports = exports['default'];
+
+/***/ }),
+/* 208 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = ImageUpload;
+
+	var _quill = __webpack_require__(190);
+
+	var _quill2 = _interopRequireDefault(_quill);
+
+	var _react = __webpack_require__(1);
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+
+	var Delta = _quill2.default.import('delta');
+
+	function insertImage(file) {
+	  var _this = this;
+
+	  var editor = this.quill;
+	  var dateTime = new Date().getTime().toString();
+	  var range = editor.getSelection(true);
+	  var scrollTop = this.quill.scrollingContainer.scrollTop;
+	  setTimeout(function () {
+	    _this.quill.selection.update(_quill2.default.sources.SILENT);
+	    // range.length contributes to delta.length()
+	    // 更新编辑器内容
+	    editor.updateContents(new Delta().retain(range.index).delete(range.length).insert({ image: _this.defaultImg }, {
+	      alt: dateTime,
+	      width: _this.defaultWidth,
+	      height: _this.defaultHeight
+	    }), 'user');
+	    _this.quill.setSelection(range.index - range.length + 1, _quill2.default.sources.SILENT);
+	    _this.quill.scrollingContainer.scrollTop = scrollTop;
+	    _this.quill.selection.scrollIntoView();
+	  }, 1);
+	  return this.uploadFile(file).then(function (_ref) {
+	    var src = _ref.src,
+	        width = _ref.width,
+	        height = _ref.height,
+	        alt = _ref.alt;
+
+	    var delta = editor.getContents();
+	    var imgIndex = 0;
+	    var isStop = false;
+	    delta.forEach(function (op) {
+	      if (!isStop) {
+	        imgIndex += op.insert.length || 1;
+	      }
+	      if (op.attributes && op.attributes.alt === dateTime) {
+	        isStop = true;
+	      }
+	    });
+	    // const currentRange = editor.getSelection(true);
+	    editor.updateContents(new Delta().retain(imgIndex - 1).delete(1).insert({ image: src }, { width: width, height: height, alt: alt }), 'user');
+	    // editor.setSelection(currentRange.index + 1);
+	    return src;
+	  });
+	}
+
+	function handlerPaste(evt) {
+	  var clipboardData = evt.clipboardData;
+	  if (!clipboardData || !clipboardData.items) return;
+	  for (var i = 0; i < clipboardData.items.length; i++) {
+	    var item = clipboardData.items[i];
+	    if (item.kind === 'file' && item.type.match(/^image\//i)) {
+	      evt.stopPropagation();
+	      evt.preventDefault();
+	      var file = item.getAsFile(); // 获取文件后可直接上传
+	      insertImage.call(this, file);
+	    }
+	  }
+	}
+	function handlerImage() {
+	  var _this2 = this;
+
+	  var container = this.quill.getModule('toolbar').container;
+	  var fileInput = container.querySelector('input.ql-image[type=file]');
+	  if (fileInput == null) {
+	    fileInput = document.createElement('input');
+	    fileInput.setAttribute('type', 'file');
+	    fileInput.setAttribute('accept', 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon');
+	    fileInput.classList.add('ql-image');
+	    fileInput.addEventListener('change', function () {
+	      if (fileInput.files != null && fileInput.files[0] != null) {
+	        var file = fileInput.files[0];
+	        insertImage.call(_this2, file);
+	      }
+	    });
+	    container.appendChild(fileInput);
+	  }
+	  fileInput.click();
+	}
+	function ImageUpload(props) {
+	  var quill = props.quill;
+	  var toolbar = quill.getModule('toolbar');
+	  if (props.uploadFile) {
+	    quill.root.addEventListener('paste', handlerPaste.bind(props));
+	    toolbar.addHandler('image', handlerImage.bind(props));
+	  }
+	  return null;
+	}
+	ImageUpload.propTypes = {
+	  uploadFile: _react.PropTypes.func.isRequired
+	  // quill: PropTypes.objectOf(PropTypes.any).isRequired,
+	};
+	ImageUpload.defaultProps = {
+	  defaultImg: 'http://file.digitaling.com/eImg/uimages/20150907/1441607669881619.gif',
+	  defaultWidth: 200,
+	  defaultHeight: 150
+	};
+	module.exports = exports['default'];
+
+/***/ }),
+/* 209 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _quill = __webpack_require__(190);
+
+	var _quill2 = _interopRequireDefault(_quill);
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+
+	var tempCont = document.createElement('div');
+
+	function deltaToHtml(delta) {
+	  var editor = new _quill2.default(tempCont);
+	  editor.setContents(delta);
+	  return editor.root.innerHTML;
+	}
+	exports.default = deltaToHtml;
+	module.exports = exports['default'];
+
+/***/ }),
+/* 210 */
+/***/ (function(module, exports, __webpack_require__) {
+
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(208);
+	var content = __webpack_require__(211);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -39189,7 +39455,7 @@ webpackJsonp([0,1],[
 	}
 
 /***/ }),
-/* 208 */
+/* 211 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(186)(undefined);

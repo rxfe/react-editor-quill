@@ -30,46 +30,69 @@ const defaultModules = {
   ]
 };
 const source = new Array(20).fill(1).map((i, j) => `${j}asdfghjkl`);
-const plugins = [
-  <Count limit={100} />,
-  <Meniton source={source} formatter={formatter} />,
-  <Meniton
-    delimiter="#"
-    mentionFormatter={data => `#${data.text}#`}
-    source={source}
-    formatter={formatter}
-    insertMode="TEXT_NODE"
-  />,
-  <ImageUpload
-    uploadFile={file =>
-      new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const result = event.target.result;
-          setTimeout(() => {
-            resolve({ src: result });
-          }, 1000);
-        };
-        reader.onerror = (error) => {
-          reject(error);
-        };
-        reader.readAsDataURL(file);
-      })}
-  />
-];
 const appElement = document.getElementById('example');
 
-ReactDOM.render(
-  <div>
-    <Editor
-      plugins={plugins}
-      defaultValue="@"
-      modules={defaultModules}
-    />
-    <Editor plugins={plugins} defaultValue="#" modules={defaultModules} />
-    <div
-      dangerouslySetInnerHTML={{ __html: deltaToHtml([{ insert: '123' }]) }}
-    />
-  </div>,
-  appElement
-);
+class App extends React.Component {
+  constructor (props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+    this.state = {
+      source
+    };
+    setTimeout(() => {
+      this.setState({
+        source: []
+      });
+    }, 1000);
+  }
+  handleClick () {
+    console.log(this.target.getEditor().getContents());
+  }
+  render () {
+    const plugins = [
+      <Count limit={100} />,
+      <Meniton source={source} formatter={formatter} />,
+      <Meniton
+        delimiter="#"
+        mentionFormatter={data => `#${data.text}#`}
+        source={source}
+        formatter={formatter}
+        insertMode="TEXT_NODE"
+      />,
+      <ImageUpload
+        uploadFile={file =>
+          new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              const result = event.target.result;
+              setTimeout(() => {
+                resolve({ src: result });
+              }, 1000);
+            };
+            reader.onerror = (error) => {
+              reject(error);
+            };
+            reader.readAsDataURL(file);
+          })}
+      />
+    ];
+    return (
+      <div>
+        <Editor
+          plugins={plugins}
+          defaultValue="@"
+          modules={defaultModules}
+          ref={target => this.target = target}
+        />
+        <Editor plugins={plugins} defaultValue="#" modules={defaultModules} />
+        <div
+          dangerouslySetInnerHTML={{ __html: deltaToHtml([{ insert: '123' }]) }}
+        />
+        <button onClick={this.handleClick}>
+          123
+        </button>
+      </div>
+    );
+  }
+}
+ReactDOM.render(<App />, appElement);

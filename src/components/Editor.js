@@ -20,7 +20,6 @@ export default class Editor extends BaseEditor {
     onChange: T.func,
     onPaste: T.func,
     onChangeSelection: T.func,
-    onSelectImage: T.func,
     modules: T.objectOf(T.any),
     formats: T.arrayOf(T.any),
     plugins: T.arrayOf(T.any),
@@ -32,7 +31,6 @@ export default class Editor extends BaseEditor {
     'bounds',
     'theme',
     'children',
-    'plugins'
   ];
   /*
   Changing one of these props should cause a regular update.
@@ -41,14 +39,14 @@ export default class Editor extends BaseEditor {
     'id',
     'className',
     'style',
+    'plugins',
     'placeholder',
     'onKeyPress',
     'onKeyDown',
     'onKeyUp',
     'onChange',
     'onChangeSelection',
-    'onPaste',
-    'onSelectImage'
+    'onPaste'
   ];
   static defaultProps = {
     theme: 'snow',
