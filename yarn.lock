@@ -1693,7 +1693,7 @@ css-color-names@0.0.4:
 
 css-loader@^0.28.4:
   version "0.28.4"
-  resolved "http://registry.npm.taobao.org/css-loader/download/css-loader-0.28.4.tgz#6cf3579192ce355e8b38d5f42dd7a1f2ec898d0f"
+  resolved "https://registry.npmjs.org/css-loader/-/css-loader-0.28.4.tgz#6cf3579192ce355e8b38d5f42dd7a1f2ec898d0f"
   dependencies:
     babel-code-frame "^6.11.0"
     css-selector-tokenizer "^0.7.0"

@@ -345,7 +345,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'convertHtml',
 	    value: function convertHtml(html) {
 	      if (Array.isArray(html)) return html;
-	      return this.editor.clipboard.convert('<div class=\'ql-editor\' style="white-space: normal;">' + html + '<p><br></p></div>');
+	      return this.editor.clipboard.convert('<div class=\'ql-editor\' style="white-space: normal;">' + html + '<p><br></p></div>').ops;
 	    }
 	  }, {
 	    key: 'renderPlugins',
@@ -487,14 +487,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  onChange: _react.PropTypes.func,
 	  onPaste: _react.PropTypes.func,
 	  onChangeSelection: _react.PropTypes.func,
-	  onSelectImage: _react.PropTypes.func,
 	  modules: _react.PropTypes.objectOf(_react.PropTypes.any),
 	  formats: _react.PropTypes.arrayOf(_react.PropTypes.any),
 	  plugins: _react.PropTypes.arrayOf(_react.PropTypes.any),
 	  children: _react.PropTypes.element
 	};
-	Editor.dirtyProps = ['modules', 'formats', 'bounds', 'theme', 'children', 'plugins'];
-	Editor.cleanProps = ['id', 'className', 'style', 'placeholder', 'onKeyPress', 'onKeyDown', 'onKeyUp', 'onChange', 'onChangeSelection', 'onPaste', 'onSelectImage'];
+	Editor.dirtyProps = ['modules', 'formats', 'bounds', 'theme', 'children'];
+	Editor.cleanProps = ['id', 'className', 'style', 'plugins', 'placeholder', 'onKeyPress', 'onKeyDown', 'onKeyUp', 'onChange', 'onChangeSelection', 'onPaste'];
 	Editor.defaultProps = {
 	  theme: 'snow',
 	  modules: {}
@@ -2472,7 +2471,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'setEditorContents',
 	    value: function setEditorContents(editor, value) {
 	      var delta = this.convertHtml(value);
-	      if ((0, _lodash2.default)(delta, editor.getContents())) return;
+	      if ((0, _lodash2.default)(delta, this.convertHtml(editor.root.innerHTML))) return;
 	      var sel = editor.getSelection();
 	      editor.setContents(delta || []);
 	      if (sel) this.setEditorSelection(editor, sel);

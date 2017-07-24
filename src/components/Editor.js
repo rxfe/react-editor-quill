@@ -201,7 +201,7 @@ export default class Editor extends BaseEditor {
     if (Array.isArray(html)) return html;
     return this.editor.clipboard.convert(
       `<div class='ql-editor' style="white-space: normal;">${html}<p><br></p></div>`
-    );
+    ).ops;
   }
 
   renderPlugins (quill) {

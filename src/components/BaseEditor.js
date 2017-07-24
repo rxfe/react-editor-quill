@@ -21,7 +21,7 @@ export default class BaseEditor extends React.Component {
   */
   setEditorContents (editor, value) {
     const delta = this.convertHtml(value);
-    if (isEqual(delta, editor.getContents())) return;
+    if (isEqual(delta, this.convertHtml(editor.root.innerHTML))) return;
     const sel = editor.getSelection();
     editor.setContents(delta || []);
     if (sel) this.setEditorSelection(editor, sel);

@@ -1,6 +1,6 @@
 {
   "name": "react-editor-quill",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A Quill editor component for React.",
   "main": "./lib/index.js",
   "directories": {
@@ -11,10 +11,11 @@
   "scripts": {
     "test": "NODE_ENV=test karma start",
     "test:full": "npm-run-all -p 'test -- --single-run' lint",
-    "start": "concurrently --kill-others \"npm run watch\" \"npm run demo\"",
     "watch": "babel src -d lib -w",
     "demo": "scripts/dev-examples",
-    "build": "scripts/build",
+    "start": "concurrently --kill-others \"npm run watch\" \"npm run demo\"",
+    "prebuild": "rimraf lib dist",
+    "build": "babel src -d lib && scripts/build",
     "docs": "npm-run-all docs:*",
     "docs-dev": "npm-run-all docs:clean docs:prepare docs:build:watch",
     "docs:clean": "rimraf _book",
@@ -24,7 +25,7 @@
     "docs:publish": "cd _book && git init && git commit --allow-empty -m 'update book' && git checkout  gh-pages && touch .nojekyll && git add . && git commit -am 'update book' && git push git@github.com:rxfe/react-editor-quill.git gh-pages --force",
     "demo:publish": "cd examples && git init && git commit --allow-empty -m 'update examples' && git checkout gh-pages && touch .nojekyll && git add . && git commit -am 'update examples' && git push git@github.com:ChasHong/react-editor-quill-demo.git gh-pages --force",
     "lint": "eslint src/ specs/",
-    "prepublish": "babel src -d lib"
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",

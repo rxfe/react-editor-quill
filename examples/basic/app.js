@@ -37,7 +37,8 @@ class App extends React.Component {
     super(props);
     this.handleClick = this.handleClick.bind(this);
     this.state = {
-      source
+      source,
+      value: ''
     };
     setTimeout(() => {
       this.setState({
@@ -51,7 +52,10 @@ class App extends React.Component {
   render () {
     const plugins = [
       <Count limit={100} />,
-      <Meniton source={source} formatter={formatter} />,
+      <Meniton
+        source={source}
+        formatter={formatter}
+      />,
       <Meniton
         delimiter="#"
         mentionFormatter={data => `#${data.text}#`}
@@ -80,9 +84,10 @@ class App extends React.Component {
       <div>
         <Editor
           plugins={plugins}
-          defaultValue="@"
+          onChange={value => this.setState({ value })}
           modules={defaultModules}
           ref={target => this.target = target}
+          value={this.state.value}
         />
         <Editor plugins={plugins} defaultValue="#" modules={defaultModules} />
         <div
