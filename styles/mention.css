@@ -1,0 +1,65 @@
+.quill-mention {
+    position: relative
+}
+
+.quill-mention-node {
+    padding: 0 2px;
+    background: 0 0;
+    border: 0;
+    color: #3C99D8
+}
+
+.quill-mention-panel {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    border: 1px solid #ededed;
+    box-shadow: 1px 1px 3px rgba(0,0,0,.2);
+    display: none;
+    z-index: 99;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    box-shadow: 0 0 4px hsla(0,0%,39%,.2);
+    line-height: 26px;
+    overflow: hidden;
+    overflow-y: auto;
+    max-height: 250px;
+}
+
+.quill-mention-panel-visible {
+    display: block
+}
+
+.quill-mention-panel-item {
+    display: block;
+    cursor: pointer;
+    padding: 6px 10px;
+    font-size: 1em;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 300px;
+}
+
+.quill-mention-panel-item:first-child {
+    border-top: 0 none
+}
+
+.quill-mention-panel-item-current,.quill-mention-panel-item:hover {
+    background-color: #dbeefe;
+}
+
+.quill-mention-placeholder {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    color: rgba(0,0,0,.4)
+}
+
+input[type=button].quill-mention-node {
+    -webkit-appearance: button;
+    cursor: pointer;
+    outline: none;
+}

@@ -7,6 +7,7 @@ import Meniton from '../../lib/plugins/mention/';
 import ImageUpload from '../../lib/plugins/imageUpload';
 import deltaToHtml from '../../lib/utils/deltaToHtml';
 import './app.css';
+import '../../styles/mention.css';
 
 const formatter = data =>
   data.map(item => ({
