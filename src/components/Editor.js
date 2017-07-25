@@ -25,13 +25,7 @@ export default class Editor extends BaseEditor {
     plugins: T.arrayOf(T.any),
     children: T.element
   };
-  static dirtyProps = [
-    'modules',
-    'formats',
-    'bounds',
-    'theme',
-    'children',
-  ];
+  static dirtyProps = ['modules', 'formats', 'bounds', 'theme', 'children'];
   /*
   Changing one of these props should cause a regular update.
   */
@@ -83,14 +77,17 @@ export default class Editor extends BaseEditor {
         this.setEditorContents(editor, nextProps.value);
       }
     }
-
+    if (!isEqual(nextProps.plugins, this.props.plugins)) {
+      // if (this.props.plugins) {
+      this.renderPlugins(this.editor);
+      // }
+    }
     // We can update readOnly state in-place.
     if ('readOnly' in nextProps) {
       if (nextProps.readOnly !== this.props.readOnly) {
         this.setEditorReadOnly(editor, nextProps.readOnly);
       }
     }
-
     // If we need to regenerate the component, we can avoid a detailed
     // in-place update step, and just let everything rerender.
     if (this.shouldComponentRegenerate(nextProps, nextState)) {

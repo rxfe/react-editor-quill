@@ -208,14 +208,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	          this.setEditorContents(editor, nextProps.value);
 	        }
 	      }
-
+	      if (!(0, _lodash2.default)(nextProps.plugins, this.props.plugins)) {
+	        // if (this.props.plugins) {
+	        this.renderPlugins(this.editor);
+	        // }
+	      }
 	      // We can update readOnly state in-place.
 	      if ('readOnly' in nextProps) {
 	        if (nextProps.readOnly !== this.props.readOnly) {
 	          this.setEditorReadOnly(editor, nextProps.readOnly);
 	        }
 	      }
-
 	      // If we need to regenerate the component, we can avoid a detailed
 	      // in-place update step, and just let everything rerender.
 	      if (this.shouldComponentRegenerate(nextProps, nextState)) {

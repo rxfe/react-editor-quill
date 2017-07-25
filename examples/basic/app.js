@@ -38,14 +38,14 @@ class App extends React.Component {
     super(props);
     this.handleClick = this.handleClick.bind(this);
     this.state = {
-      source,
+      source: [],
       value: ''
     };
     setTimeout(() => {
       this.setState({
-        source: []
+        source
       });
-    }, 1000);
+    }, 9000);
   }
   handleClick () {
     console.log(this.target.getEditor().getContents());
@@ -54,13 +54,17 @@ class App extends React.Component {
     const plugins = [
       <Count limit={100} />,
       <Meniton
-        source={source}
+        source={(str, next) => {
+          debugger
+          console.log(str);
+          next(this.state.source);
+        }}
         formatter={formatter}
       />,
       <Meniton
         delimiter="#"
         mentionFormatter={data => `#${data.text}#`}
-        source={source}
+        source={this.state.source}
         formatter={formatter}
         insertMode="TEXT_NODE"
       />,

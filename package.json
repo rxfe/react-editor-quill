@@ -1,6 +1,6 @@
 {
   "name": "react-editor-quill",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A Quill editor component for React.",
   "main": "./lib/index.js",
   "directories": {
