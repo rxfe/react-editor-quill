@@ -6,6 +6,7 @@ import Count from '../../lib/plugins/count/';
 import Meniton from '../../lib/plugins/mention/';
 import ImageUpload from '../../lib/plugins/imageUpload';
 import deltaToHtml from '../../lib/utils/deltaToHtml';
+import Emoji from '../../lib/plugins/emoji';
 import './app.css';
 import '../../styles/mention.css';
 
@@ -18,7 +19,7 @@ const defaultModules = {
     [{ font: [] }, { size: [] }],
     [{ align: [] }, 'direction'],
     [{ header: 1 }, { header: 2 }],
-    ['bold', 'italic', 'underline', 'strike'],
+    ['bold', 'italic', 'underline', 'strike', 'emoji'],
     [{ color: [] }, { background: [] }],
     [
       { list: 'ordered' },
@@ -52,11 +53,10 @@ class App extends React.Component {
   }
   render () {
     const plugins = [
+      <Emoji />,
       <Count limit={100} />,
       <Meniton
         source={(str, next) => {
-          debugger
-          console.log(str);
           next(this.state.source);
         }}
         formatter={formatter}
