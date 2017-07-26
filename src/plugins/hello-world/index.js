@@ -9,7 +9,6 @@ export default class HelloWorld extends Component {
     this.state = {
       value: 'hello world!'
     };
-    console.log(this.props.quill);
   }
   render () {
     return (<span>{this.state.value}</span>);
