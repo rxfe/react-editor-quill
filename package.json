@@ -13,7 +13,7 @@
     "test:full": "npm-run-all -p 'test -- --single-run' lint",
     "watch": "babel src -d lib -w",
     "demo": "scripts/dev-examples",
-    "start": "concurrently --kill-others \"npm run watch\" && \"npm run demo\"",
+    "start": "concurrently --kill-others \"npm run watch\" \"npm run demo\"",
     "prebuild": "rimraf lib dist",
     "build": "babel src -d lib && scripts/build",
     "docs": "npm-run-all docs:*",
