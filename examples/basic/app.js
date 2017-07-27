@@ -90,6 +90,12 @@ class App extends React.Component {
           modules={defaultModules}
           ref={target => this.target = target}
           value={this.state.value}
+          onFocus={() => {
+            console.log('focus');
+          }}
+          onBlur={() => {
+            console.log('blur');
+          }}
         />
         <Editor plugins={plugins} defaultValue="#" modules={defaultModules} />
         <div

@@ -141,7 +141,13 @@ webpackJsonp([0,1],[
 	          ref: function ref(target) {
 	            return _this2.target = target;
 	          },
-	          value: this.state.value
+	          value: this.state.value,
+	          onFocus: function onFocus() {
+	            console.log('focus');
+	          },
+	          onBlur: function onBlur() {
+	            console.log('blur');
+	          }
 	        }),
 	        _react2.default.createElement(_lib2.default, { plugins: plugins, defaultValue: '#', modules: defaultModules }),
 	        _react2.default.createElement('div', {
@@ -53197,13 +53203,13 @@ webpackJsonp([0,1],[
 	    }
 	  }, {
 	    key: 'onEditorChangeText',
-	    value: function onEditorChangeText(value, delta, source, editor) {
+	    value: function onEditorChangeText(value, delta, diffDelta, oldDelta, source, editor) {
 	      var _this4 = this;
 
 	      if (delta.ops !== this.getEditorContents()) {
 	        this.setState({ value: delta.ops }, function () {
 	          if (_this4.props.onChange) {
-	            _this4.props.onChange(value, delta, source, editor);
+	            _this4.props.onChange(value, delta, diffDelta, oldDelta, source, editor);
 	          }
 	        });
 	      }
@@ -53228,6 +53234,29 @@ webpackJsonp([0,1],[
 	      if (onPaste) {
 	        onPaste.call(this, e);
 	      }
+	    }
+	  }, {
+	    key: 'onFocus',
+	    value: function onFocus(e) {
+	      var onFocus = this.props.onFocus;
+
+	      if (onFocus) {
+	        onFocus.call(this, e);
+	      }
+	    }
+	  }, {
+	    key: 'onBlur',
+	    value: function onBlur(e) {
+	      var _this5 = this;
+
+	      var onBlur = this.props.onBlur;
+
+	      if (!onBlur) return;
+	      setTimeout(function () {
+	        if (!_this5.editor.hasFocus()) {
+	          onBlur.call(_this5, e);
+	        }
+	      }, 100);
 	    }
 	    /*
 	    Renders an editor area, unless it has been provided one to clone.
@@ -53255,7 +53284,7 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this5 = this;
+	      var _this6 = this;
 
 	      var _props = this.props,
 	          onKeyDown = _props.onKeyDown,
@@ -53271,7 +53300,7 @@ webpackJsonp([0,1],[
 	        onKeyUp: onKeyUp,
 	        className: ['quill'].concat(this.props.className).join(' ')
 	      }, this.renderEditingArea(), _react2.default.createElement('div', { ref: function ref(target) {
-	          return _this5.pluginsTarget = target;
+	          return _this6.pluginsTarget = target;
 	        } }));
 	    }
 	  }]);
@@ -53294,6 +53323,8 @@ webpackJsonp([0,1],[
 	  onKeyUp: _react.PropTypes.func,
 	  onChange: _react.PropTypes.func,
 	  onPaste: _react.PropTypes.func,
+	  onFocus: _react.PropTypes.func,
+	  onBlur: _react.PropTypes.func,
 	  onChangeSelection: _react.PropTypes.func,
 	  modules: _react.PropTypes.objectOf(_react.PropTypes.any),
 	  formats: _react.PropTypes.arrayOf(_react.PropTypes.any),
@@ -53304,7 +53335,7 @@ webpackJsonp([0,1],[
 	  plugins: []
 	};
 	Editor.dirtyProps = ['modules', 'formats', 'bounds', 'theme', 'children'];
-	Editor.cleanProps = ['id', 'className', 'style', 'plugins', 'placeholder', 'onKeyPress', 'onKeyDown', 'onKeyUp', 'onChange', 'onChangeSelection', 'onPaste'];
+	Editor.cleanProps = ['id', 'className', 'style', 'plugins', 'placeholder', 'onKeyPress', 'onKeyDown', 'onKeyUp', 'onChange', 'onChangeSelection', 'onPaste', 'onFocus', 'onBlur'];
 	Editor.defaultProps = {
 	  theme: 'snow',
 	  modules: {}
@@ -55288,7 +55319,7 @@ webpackJsonp([0,1],[
 
 	      this.handleTextChange = function (delta, oldDelta, source) {
 	        if (_this2.onEditorChangeText) {
-	          _this2.onEditorChangeText(editor.root.innerHTML, delta, source, unprivilegedEditor);
+	          _this2.onEditorChangeText(editor.root.innerHTML, editor.getContents(), delta, oldDelta, source, unprivilegedEditor);
 	          _this2.onEditorChangeSelection(editor.getSelection(), source, unprivilegedEditor);
 	        }
 	      };
@@ -55299,19 +55330,28 @@ webpackJsonp([0,1],[
 	        }
 	      }.bind(this);
 	      this.handlePaste = function (e) {
-	        if (this.onPaste) {
-	          this.onPaste(e);
-	        }
+	        this.onPaste(e);
+	      }.bind(this);
+	      this.handleFocus = function (e) {
+	        this.onFocus(e);
+	      }.bind(this);
+	      this.handleBlur = function (e) {
+	        this.onBlur(e);
 	      }.bind(this);
 	      editor.on('text-change', this.handleTextChange);
 	      editor.on('selection-change', this.handleSelectionChange);
 	      editor.root.addEventListener('paste', this.handlePaste);
+	      editor.root.addEventListener('focus', this.handleFocus);
+	      editor.root.addEventListener('blur', this.handleBlur);
 	    }
 	  }, {
 	    key: 'unhookEditor',
 	    value: function unhookEditor(editor) {
 	      editor.off('selection-change');
 	      editor.off('editor-change');
+	      editor.root.removeEventListener('paste', this.handlePaste);
+	      editor.root.removeEventListener('focus', this.handleFocus);
+	      editor.root.removeEventListener('blur', this.handleBlur);
 	    }
 
 	    /*

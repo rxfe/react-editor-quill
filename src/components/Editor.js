@@ -19,6 +19,8 @@ export default class Editor extends BaseEditor {
     onKeyUp: T.func,
     onChange: T.func,
     onPaste: T.func,
+    onFocus: T.func,
+    onBlur: T.func,
     onChangeSelection: T.func,
     modules: T.objectOf(T.any),
     formats: T.arrayOf(T.any),
@@ -27,7 +29,7 @@ export default class Editor extends BaseEditor {
   };
   static defaultProps = {
     plugins: []
-  }
+  };
   static dirtyProps = ['modules', 'formats', 'bounds', 'theme', 'children'];
   /*
   Changing one of these props should cause a regular update.
@@ -43,7 +45,9 @@ export default class Editor extends BaseEditor {
     'onKeyUp',
     'onChange',
     'onChangeSelection',
-    'onPaste'
+    'onPaste',
+    'onFocus',
+    'onBlur'
   ];
   static defaultProps = {
     theme: 'snow',
@@ -239,11 +243,18 @@ export default class Editor extends BaseEditor {
   focus () {
     this.editor.focus();
   }
-  onEditorChangeText (value, delta, source, editor) {
+  onEditorChangeText (value, delta, diffDelta, oldDelta, source, editor) {
     if (delta.ops !== this.getEditorContents()) {
       this.setState({ value: delta.ops }, () => {
         if (this.props.onChange) {
-          this.props.onChange(value, delta, source, editor);
+          this.props.onChange(
+            value,
+            delta,
+            diffDelta,
+            oldDelta,
+            source,
+            editor
+          );
         }
       });
     }
@@ -263,6 +274,21 @@ export default class Editor extends BaseEditor {
     if (onPaste) {
       onPaste.call(this, e);
     }
+  }
+  onFocus (e) {
+    const { onFocus } = this.props;
+    if (onFocus) {
+      onFocus.call(this, e);
+    }
+  }
+  onBlur (e) {
+    const { onBlur } = this.props;
+    if (!onBlur) return;
+    setTimeout(() => {
+      if (!this.editor.hasFocus()) {
+        onBlur.call(this, e);
+      }
+    }, 100);
   }
   /*
   Renders an editor area, unless it has been provided one to clone.
