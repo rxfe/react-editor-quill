@@ -1,7 +1,5 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
-import isEqual from 'lodash.isequal';
-import defaultEmojiList from './emojiList';
 
 const noop = () => {};
 
@@ -30,6 +28,12 @@ function EmojiToolbar (props) {
     </div>
   );
 }
+EmojiToolbar.propTypes = {
+  emojiList: PropTypes.arrayOf(PropTypes.any).isRequired,
+  changeToolbarItem: PropTypes.func.isRequired,
+  activeIndex: PropTypes.number.isRequired
+};
+
 function EmojiPanel (props) {
   const { emojiItems, clickItem } = props;
   return (
@@ -39,7 +43,7 @@ function EmojiPanel (props) {
           <span
             className="emoji-item"
             onClick={e => clickItem(item, emojiItems, e)}
-            key={item.title}
+            key={`${item.title}-${emojiItems.type}`}
             title={item.title}
           >
             <img src={item.src} alt={item.alt} />
@@ -49,6 +53,10 @@ function EmojiPanel (props) {
     </div>
   );
 }
+EmojiPanel.propTypes = {
+  emojiItems: PropTypes.objectOf(PropTypes.any).isRequired,
+  clickItem: PropTypes.func.isRequired
+};
 export default class EmojiContainer extends React.Component {
   static propTypes = {
     isShow: PropTypes.bool.isRequired,
@@ -91,7 +99,10 @@ export default class EmojiContainer extends React.Component {
           activeIndex={activeIndex}
           changeToolbarItem={this.changeToolbarItem}
         />
-        <EmojiPanel emojiItems={emojiList[activeIndex]} clickItem={onClickItem} />
+        <EmojiPanel
+          emojiItems={emojiList[activeIndex]}
+          clickItem={onClickItem}
+        />
       </div>
     );
   }

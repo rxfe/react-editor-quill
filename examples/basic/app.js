@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import 'quill/dist/quill.snow.css';
+import { map } from 'lodash';
 import Editor from '../../lib/';
 import Count from '../../lib/plugins/count/';
 import Meniton from '../../lib/plugins/mention/';
@@ -9,6 +10,7 @@ import deltaToHtml from '../../lib/utils/deltaToHtml';
 import Emoji from '../../lib/plugins/emoji';
 import './app.css';
 import '../../styles/mention.css';
+import '../../styles/emoji.css';
 
 const formatter = data =>
   data.map(item => ({
@@ -31,7 +33,7 @@ const defaultModules = {
     ['clean']
   ]
 };
-const source = new Array(20).fill(1).map((i, j) => `${j}asdfghjkl`);
+const source = map(new Array(20), (item, index) => `${index}-quill`);
 const appElement = document.getElementById('example');
 
 class App extends React.Component {
@@ -42,11 +44,6 @@ class App extends React.Component {
       source: [],
       value: ''
     };
-    setTimeout(() => {
-      this.setState({
-        source
-      });
-    }, 9000);
   }
   handleClick () {
     console.log(this.target.getEditor().getContents());
@@ -57,7 +54,7 @@ class App extends React.Component {
       <Count limit={100} />,
       <Meniton
         source={(str, next) => {
-          next(this.state.source);
+          next(source.filter(item => item.indexOf(str) > -1));
         }}
         formatter={formatter}
       />,
@@ -89,7 +86,7 @@ class App extends React.Component {
       <div>
         <Editor
           plugins={plugins}
-          onChange={(value, delta) => this.setState({ value: delta.ops })}
+          onChange={(value, delta) => this.setState({ value })}
           modules={defaultModules}
           ref={target => this.target = target}
           value={this.state.value}

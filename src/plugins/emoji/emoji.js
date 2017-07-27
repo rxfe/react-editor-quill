@@ -5,10 +5,18 @@ import defaultEmojiList from './emojiList';
 import EmojiContainer from './emojiContainer';
 import ToolbarEmoji from './toolbarEmoji';
 
+const Image = Quill.import('formats/image');
+class EmojiBlot extends Image {}
+EmojiBlot.blotName = 'emoji';
+EmojiBlot.tagName = 'img';
+Quill.register({
+  'formats/emoji': EmojiBlot
+});
 const Delta = Quill.import('delta');
 export default class Emoji extends React.Component {
   static propTypes = {
-    emojiList: PropTypes.arrayOf(PropTypes.any)
+    emojiList: PropTypes.arrayOf(PropTypes.any),
+    quill: PropTypes.objectOf(PropTypes.any)
   };
   static defaultProps = {
     emojiList: defaultEmojiList
@@ -48,14 +56,9 @@ export default class Emoji extends React.Component {
         left: $button.offsetLeft - this.$el.clientWidth / 2 + 15
       };
     }
-    this.setState(
-      {
-        isShow: !this.state.isShow
-      },
-      () => {
-        this.quill.focus();
-      }
-    );
+    this.setState({
+      isShow: !this.state.isShow
+    });
   }
   handleClickItem (item, type) {
     const editor = this.quill;

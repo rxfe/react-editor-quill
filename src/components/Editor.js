@@ -25,6 +25,9 @@ export default class Editor extends BaseEditor {
     plugins: T.arrayOf(T.any),
     children: T.element
   };
+  static defaultProps = {
+    plugins: []
+  }
   static dirtyProps = ['modules', 'formats', 'bounds', 'theme', 'children'];
   /*
   Changing one of these props should cause a regular update.
@@ -77,7 +80,7 @@ export default class Editor extends BaseEditor {
         this.setEditorContents(editor, nextProps.value);
       }
     }
-    if (!isEqual(nextProps.plugins, this.props.plugins)) {
+    if (nextProps.plugins.length !== this.props.plugins.length) {
       // if (this.props.plugins) {
       this.renderPlugins(this.editor);
       // }

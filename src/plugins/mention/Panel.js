@@ -1,4 +1,3 @@
-
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 
@@ -11,16 +10,19 @@ export default class Panel extends React.Component {
     visible: PropTypes.bool.isRequired,
     onSelect: PropTypes.func,
     formatter: PropTypes.func
-  }
+  };
   static defaultProps = {
     prefixCls: '',
     list: [],
     style: {},
     idx: 0,
     onSelect: () => {},
-    formatter: '',
-  }
+    formatter: ''
+  };
   componentDidUpdate (prevProps) {
+    if (prevProps.visible === false && this.props.visible === true) {
+      this.panel.scrollTop = 0;
+    }
     if (this.props.idx !== prevProps.idx) {
       this.maybeScrollItemIntoView();
     }
@@ -40,31 +42,39 @@ export default class Panel extends React.Component {
     }
   }
   render () {
-    const { onSelect, list, style, visible, idx, formatter, prefixCls } = this.props;
+    const {
+      onSelect,
+      list,
+      style,
+      visible,
+      idx,
+      formatter,
+      prefixCls
+    } = this.props;
     const clsObj = {};
     clsObj[`${prefixCls}-panel`] = true;
     clsObj[`${prefixCls}-panel-visible`] = visible;
     const cls = classNames(clsObj);
     return (
-      <ul className={cls} style={style} ref={e => (this.panel = e)}>
-        {
-          list.map((item, index) => {
-            const itemClsObj = {};
-            itemClsObj[`${prefixCls}-panel-item`] = true;
-            itemClsObj[`${prefixCls}-panel-item-current`] = idx === index;
-            const itemCls = classNames(itemClsObj);
-            return (
-              <li // eslint-disable-line
-                className={itemCls}
-                key={item.id || index}
-                ref={e => (this[`item-${index}`] = e)}
-                onClick={() => onSelect(item)}
-              >
-                <div dangerouslySetInnerHTML={{ __html: formatter(item) }} />
-              </li>
-            );
-          })
-        }
+      <ul className={cls} style={style} ref={e => this.panel = e}>
+        {list.map((item, index) => {
+          const itemClsObj = {};
+          itemClsObj[`${prefixCls}-panel-item`] = true;
+          itemClsObj[`${prefixCls}-panel-item-current`] = idx === index;
+          const itemCls = classNames(itemClsObj);
+          return (
+            <li // eslint-disable-line
+              className={itemCls}
+              key={item.id || index}
+              ref={e => this[`item-${index}`] = e}
+              onClick={() => onSelect(item)}
+            >
+              <div>
+                {formatter(item)}
+              </div>
+            </li>
+          );
+        })}
       </ul>
     );
   }

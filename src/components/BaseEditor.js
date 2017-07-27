@@ -3,14 +3,16 @@ import Quill from 'quill';
 import isEqual from 'lodash.isequal';
 
 export default class BaseEditor extends React.Component {
-
   setEditorSelection (editor, r) {
     const range = r;
     if (range) {
       // Validate bounds before applying.
       const length = editor.getLength();
       range.index = Math.max(0, Math.min(range.index, length - 1));
-      range.length = Math.max(0, Math.min(range.length, (length - 1) - range.index));
+      range.length = Math.max(
+        0,
+        Math.min(range.length, length - 1 - range.index)
+      );
     }
     editor.setSelection(range);
   }
@@ -20,6 +22,7 @@ export default class BaseEditor extends React.Component {
   the cursor won't move.
   */
   setEditorContents (editor, value) {
+    if (typeof value === 'string' && value === editor.root.innerHTML) return;
     const delta = this.convertHtml(value);
     if (isEqual(delta, this.convertHtml(editor.root.innerHTML))) return;
     const sel = editor.getSelection();
@@ -48,11 +51,14 @@ export default class BaseEditor extends React.Component {
     this.handleTextChange = (delta, oldDelta, source) => {
       if (this.onEditorChangeText) {
         this.onEditorChangeText(
-          editor.root.innerHTML, delta, source,
+          editor.root.innerHTML,
+          delta,
+          source,
           unprivilegedEditor
         );
         this.onEditorChangeSelection(
-          editor.getSelection(), source,
+          editor.getSelection(),
+          source,
           unprivilegedEditor
         );
       }
@@ -60,10 +66,7 @@ export default class BaseEditor extends React.Component {
 
     this.handleSelectionChange = function (range, oldRange, source) {
       if (this.onEditorChangeSelection) {
-        this.onEditorChangeSelection(
-          range, source,
-          unprivilegedEditor
-        );
+        this.onEditorChangeSelection(range, source, unprivilegedEditor);
       }
     }.bind(this);
     this.handlePaste = function (e) {
@@ -87,20 +90,23 @@ export default class BaseEditor extends React.Component {
   without any state-modificating methods.
   */
   makeUnprivilegedEditor (editor) {
-    const {
-      getLength,
-      getText,
-      getContents,
-      getSelection,
-      getBounds
-    } = editor;
+    const { getLength, getText, getContents, getSelection, getBounds } = editor;
     return {
-      getLength (...arg) { return getLength.apply(editor, arg); },
-      getText (...arg) { return getText.apply(editor, arg); },
-      getContents (...arg) { return getContents.apply(editor, arg); },
-      getSelection (...arg) { return getSelection.apply(editor, arg); },
-      getBounds (...arg) { return getBounds.apply(editor, arg); },
+      getLength (...arg) {
+        return getLength.apply(editor, arg);
+      },
+      getText (...arg) {
+        return getText.apply(editor, arg);
+      },
+      getContents (...arg) {
+        return getContents.apply(editor, arg);
+      },
+      getSelection (...arg) {
+        return getSelection.apply(editor, arg);
+      },
+      getBounds (...arg) {
+        return getBounds.apply(editor, arg);
+      }
     };
   }
-
 }

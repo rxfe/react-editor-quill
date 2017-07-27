@@ -208,7 +208,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          this.setEditorContents(editor, nextProps.value);
 	        }
 	      }
-	      if (!(0, _lodash2.default)(nextProps.plugins, this.props.plugins)) {
+	      if (nextProps.plugins.length !== this.props.plugins.length) {
 	        // if (this.props.plugins) {
 	        this.renderPlugins(this.editor);
 	        // }
@@ -494,6 +494,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  formats: _react.PropTypes.arrayOf(_react.PropTypes.any),
 	  plugins: _react.PropTypes.arrayOf(_react.PropTypes.any),
 	  children: _react.PropTypes.element
+	};
+	Editor.defaultProps = {
+	  plugins: []
 	};
 	Editor.dirtyProps = ['modules', 'formats', 'bounds', 'theme', 'children'];
 	Editor.cleanProps = ['id', 'className', 'style', 'plugins', 'placeholder', 'onKeyPress', 'onKeyDown', 'onKeyUp', 'onChange', 'onChangeSelection', 'onPaste'];
@@ -2473,6 +2476,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }, {
 	    key: 'setEditorContents',
 	    value: function setEditorContents(editor, value) {
+	      if (typeof value === 'string' && value === editor.root.innerHTML) return;
 	      var delta = this.convertHtml(value);
 	      if ((0, _lodash2.default)(delta, this.convertHtml(editor.root.innerHTML))) return;
 	      var sel = editor.getSelection();

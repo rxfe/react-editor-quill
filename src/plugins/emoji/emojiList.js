@@ -1,6 +1,6 @@
 export default [
   {
-    className: 'one',
+    className: 'emoji-icon',
     src: 'https://x.sankuai.com/public/images/emoji@2x.png',
     type: 'emoji',
     width: 24,
@@ -534,9 +534,9 @@ export default [
     ]
   },
   {
-    className: 'two',
+    className: 'emotion-icon',
     src: 'https://x.sankuai.com/public/images/xiaotuan@2x.png',
-    type: '美团',
+    type: 'emotion',
     width: 56,
     height: 59,
     children: [
