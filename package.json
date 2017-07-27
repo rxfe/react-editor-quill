@@ -1,6 +1,6 @@
 {
   "name": "react-editor-quill",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A Quill editor component for React.",
   "main": "./lib/index.js",
   "directories": {
@@ -23,7 +23,7 @@
     "docs:build": "gitbook build -g rxfe/react-editor-quill",
     "docs:build:watch": "gitbook serve",
     "docs:publish": "cd _book && git init && git commit --allow-empty -m 'update book' && git checkout  gh-pages && touch .nojekyll && git add . && git commit -am 'update book' && git push git@github.com:rxfe/react-editor-quill.git gh-pages --force",
-    "demo:publish": "cd examples && git init && git commit --allow-empty -m 'update examples' && git checkout gh-pages && touch .nojekyll && git add . && git commit -am 'update examples' && git push git@github.com:ChasHong/react-editor-quill-demo.git gh-pages --force",
+    "demo:publish": "webpack && cd examples && git init && git commit --allow-empty -m 'update examples' && git checkout gh-pages && touch .nojekyll && git add . && git commit -am 'update examples' && git push git@github.com:ChasHong/react-editor-quill-demo.git gh-pages --force",
     "lint": "eslint src/ specs/",
     "prepublish": "npm run build"
   },
