@@ -65,12 +65,14 @@ class App extends React.Component {
           }, 1000);
         }}
         formatter={formatter}
-        matchRange={[2, 5]}
+        matchRange={[0, 5]}
+        placeholder="123213213"
+        notfound="notfound"
       />,
       <Meniton
         delimiter="#"
         mentionFormatter={data => `#${data.text}#`}
-        source={this.state.source}
+        source={source}
         formatter={formatter}
         insertMode="TEXT_NODE"
       />,
@@ -95,7 +97,10 @@ class App extends React.Component {
       <div>
         <Editor
           plugins={plugins}
-          onChange={(value, delta) => this.setState({ value })}
+          onChange={(value, delta) => {
+            console.log(value);
+            this.setState({ value });
+          }}
           modules={defaultModules}
           ref={target => this.target = target}
           value={this.state.value}

@@ -112,13 +112,15 @@ webpackJsonp([0,1],[
 	          }, 1000);
 	        },
 	        formatter: formatter,
-	        matchRange: [2, 5]
+	        matchRange: [0, 5],
+	        placeholder: '123213213',
+	        notfound: 'notfound'
 	      }), _react2.default.createElement(_mention2.default, {
 	        delimiter: '#',
 	        mentionFormatter: function mentionFormatter(data) {
 	          return '#' + data.text + '#';
 	        },
-	        source: this.state.source,
+	        source: _source,
 	        formatter: formatter,
 	        insertMode: 'TEXT_NODE'
 	      }), _react2.default.createElement(_imageUpload2.default, {
@@ -144,7 +146,8 @@ webpackJsonp([0,1],[
 	        _react2.default.createElement(_lib2.default, {
 	          plugins: plugins,
 	          onChange: function onChange(value, delta) {
-	            return _this2.setState({ value: value });
+	            console.log(value);
+	            _this2.setState({ value: value });
 	          },
 	          modules: defaultModules,
 	          ref: function ref(target) {
@@ -55978,6 +55981,8 @@ webpackJsonp([0,1],[
 	          var length = str.length + 1;
 	          this.STORE.bookmark = { index: sel.lastRange.index - length, length: length };
 	        }
+	      } else {
+	        this.runMatcher(false);
 	      }
 	    }
 	  }, {
@@ -56057,7 +56062,9 @@ webpackJsonp([0,1],[
 	      var _props3 = this.props,
 	          prefixCls = _props3.prefixCls,
 	          panelFormatter = _props3.panelFormatter,
-	          loadingRender = _props3.loadingRender;
+	          loadingRender = _props3.loadingRender,
+	          placeholder = _props3.placeholder,
+	          notfound = _props3.notfound;
 
 	      return _react2.default.createElement('div', { ref: function ref(target) {
 	          return _this5.targetEl = target;
@@ -56071,6 +56078,8 @@ webpackJsonp([0,1],[
 	        isLoading: isLoading,
 	        matcherStr: matcherStr,
 	        loadingRender: loadingRender,
+	        placeholder: placeholder,
+	        notfound: notfound,
 	        ref: function ref(panel) {
 	          return _this5.panel = panel;
 	        }
@@ -56138,7 +56147,9 @@ webpackJsonp([0,1],[
 	   */
 	  insertMode: _react.PropTypes.oneOf(["ELEMENT_NODE", "TEXT_NODE"]),
 	  quill: _react.PropTypes.objectOf(_react.PropTypes.any),
-	  loadingRender: _react.PropTypes.func
+	  loadingRender: _react.PropTypes.func,
+	  placeholder: _react.PropTypes.string,
+	  notfound: _react.PropTypes.string
 	};
 	QuillMention.defaultProps = {
 	  delimiter: "@",
@@ -57694,7 +57705,7 @@ webpackJsonp([0,1],[
 
 
 	// module
-	exports.push([module.id, ".quill-mention {\n  position: relative\n}\n\n.quill-mention-node {\n  padding: 0 2px;\n  background: 0 0;\n  border: 0;\n  color: #3C99D8\n}\n\n.quill-mention-panel {\n  position: absolute;\n  margin: 0;\n  padding: 0;\n  background-color: #fff;\n  border: 1px solid #ededed;\n  box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);\n  display: none;\n  z-index: 99;\n  background: #fff;\n  border: 1px solid #ddd;\n  border-radius: 2px;\n  box-shadow: 0 0 4px hsla(0, 0%, 39%, .2);\n  line-height: 26px;\n  overflow: hidden;\n  overflow-y: auto;\n  max-height: 250px;\n  min-width: 100px;\n}\n\n.quill-mention-panel ul {\n  padding: 0px;\n  margin: 0px;\n}\n\n.quill-mention-panel-visible {\n  display: block\n}\n\n.quill-mention-panel-item {\n  display: block;\n  cursor: pointer;\n  padding: 6px 20px 6px 10px;\n  font-size: 14px;\n  cursor: pointer;\n  white-space: nowrap;\n  overflow: hidden;\n  max-width: 300px;\n}\n\n.quill-mention-panel-item:first-child {\n  border-top: 0 none\n}\n.quill-mention-panel-item.quill-mention-panel-item-tips{\n  text-align: center;\n  height: 26px;\n  line-height: 26px;\n}\n.quill-mention-panel-item-current,\n.quill-mention-panel-item:hover {\n  background-color: #dbeefe;\n}\n\n.quill-mention-placeholder {\n  position: absolute;\n  top: 8px;\n  left: 10px;\n  color: rgba(0, 0, 0, .4)\n}\n\ninput[type=button].quill-mention-node {\n  -webkit-appearance: button;\n  cursor: pointer;\n  outline: none;\n}\n\n.loading-spinner {\n  text-align: center;\n  margin-top: 4px;\n}\n\n.loading-spinner .circular {\n  width: 20px;\n  height: 20px;\n  animation: loading-rotate 2s linear infinite\n}\n\n.loading-spinner .path {\n  animation: loading-dash 1.5s ease-in-out infinite;\n  stroke-dasharray: 90, 150;\n  stroke-dashoffset: 0;\n  stroke-width: 2;\n  stroke: #20a0ff;\n  stroke-linecap: round\n}\n\n.loading-fade-enter,\n.loading-fade-leave-active {\n  opacity: 0\n}\n\n@keyframes loading-rotate {\n  to {\n    transform: rotate(1turn)\n  }\n}\n\n@keyframes loading-dash {\n  0% {\n    stroke-dasharray: 1, 200;\n    stroke-dashoffset: 0\n  }\n  50% {\n    stroke-dasharray: 90, 150;\n    stroke-dashoffset: -40px\n  }\n  to {\n    stroke-dasharray: 90, 150;\n    stroke-dashoffset: -120px\n  }\n}\n", ""]);
+	exports.push([module.id, ".quill-mention {\n  position: relative\n}\n\n.quill-mention-node {\n  padding: 0 2px;\n  background: 0 0;\n  border: 0;\n  color: #3C99D8\n}\n\n.quill-mention-panel {\n  position: absolute;\n  margin: 0;\n  padding: 0;\n  background-color: #fff;\n  border: 1px solid #ededed;\n  box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);\n  display: none;\n  z-index: 99;\n  background: #fff;\n  border: 1px solid #ddd;\n  border-radius: 2px;\n  box-shadow: 0 0 4px hsla(0, 0%, 39%, .2);\n  line-height: 26px;\n  overflow: hidden;\n  overflow-y: auto;\n  max-height: 250px;\n  min-width: 100px;\n}\n\n.quill-mention-panel ul {\n  padding: 0px;\n  margin: 0px;\n}\n\n.quill-mention-panel-visible {\n  display: block\n}\n\n.quill-mention-panel-item {\n  display: block;\n  cursor: pointer;\n  padding: 6px 20px 6px 10px;\n  font-size: 14px;\n  cursor: pointer;\n  white-space: nowrap;\n  overflow: hidden;\n  max-width: 300px;\n  box-sizing: content-box;\n}\n\n.quill-mention-panel-item:first-child {\n  border-top: 0 none\n}\n.quill-mention-panel-item.quill-mention-panel-item-tips{\n  text-align: center;\n  height: 26px;\n  line-height: 26px;\n}\n.quill-mention-panel-item-current,\n.quill-mention-panel-item:hover {\n  background-color: #dbeefe;\n}\n\n.quill-mention-placeholder {\n  position: absolute;\n  top: 8px;\n  left: 10px;\n  color: rgba(0, 0, 0, .4)\n}\n\ninput[type=button].quill-mention-node {\n  -webkit-appearance: button;\n  cursor: pointer;\n  outline: none;\n}\n\n.loading-spinner {\n  text-align: center;\n  margin-top: 4px;\n}\n\n.loading-spinner .circular {\n  width: 20px;\n  height: 20px;\n  animation: loading-rotate 2s linear infinite\n}\n\n.loading-spinner .path {\n  animation: loading-dash 1.5s ease-in-out infinite;\n  stroke-dasharray: 90, 150;\n  stroke-dashoffset: 0;\n  stroke-width: 2;\n  stroke: #20a0ff;\n  stroke-linecap: round\n}\n\n.loading-fade-enter,\n.loading-fade-leave-active {\n  opacity: 0\n}\n\n@keyframes loading-rotate {\n  to {\n    transform: rotate(1turn)\n  }\n}\n\n@keyframes loading-dash {\n  0% {\n    stroke-dasharray: 1, 200;\n    stroke-dashoffset: 0\n  }\n  50% {\n    stroke-dasharray: 90, 150;\n    stroke-dashoffset: -40px\n  }\n  to {\n    stroke-dasharray: 90, 150;\n    stroke-dashoffset: -120px\n  }\n}\n", ""]);
 
 	// exports
 
@@ -57739,7 +57750,7 @@ webpackJsonp([0,1],[
 
 
 	// module
-	exports.push([module.id, ".ql-emoji {\n  width: 28px;\n}\n\n.emoji-container {\n  position: absolute;\n  width: 408px;\n  background-color: #fff;\n  z-index: 10;\n  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .24);\n  border-radius: 4px;\n  text-align: left;\n  visibility: hidden;\n}\n\n.emoji-container.show {\n  visibility: visible;\n}\n\n.emoji-panel {\n  padding: 10px 12px;\n  background-color: #fff;\n  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .24);\n  border-radius: 4px;\n}\n\n.emoji-toolbar {\n  height: 40px;\n  line-height: 40px;\n  padding-left: 10px;\n  background-color: #f8f8f8;\n  border: 0 solid rgba(0, 0, 0, .05);\n  border-top-width: 1px;\n  border-bottom-left-radius: 4px;\n  border-bottom-right-radius: 4px;\n}\n\n.emoji-toolbar .toolbar-item {\n  width: 54px;\n  text-align: center;\n  display: inline-block;\n  line-height: 40px;\n  height: 41px;\n  top: -1px;\n  cursor: pointer;\n  border-left: 1px solid transparent;\n  border-right: 1px solid transparent;\n}\n\n.emoji-list span.emoji-item {\n  padding: 4px;\n  user-select: none;\n  display: inline-block;\n}\n\n.emoji-toolbar .toolbar-item img {\n  vertical-align: middle;\n  width: 20px;\n  height: 20px;\n}\n\n.emoji-toolbar .toolbar-item.active {\n  background-color: #fff;\n  border-color: inherit;\n}\n\n.emoji-list.emoji-icon span.emoji-item {\n  width: 24px;\n  height: 24px;\n}\n\n.emoji-list.emotion-icon span.emoji-item {\n  width: 56px;\n  height: 59px;\n}\n\n.emoji-list span.emoji-item:hover {\n  background-color: rgba(17, 139, 251, .05);\n  cursor: pointer;\n}\n\n.emoji-list span img {\n  width: 100%;\n  height: 100%;\n}\n\n.arrow-down {\n  position: absolute;\n  background: #f8f8f8;\n  width: 14px;\n  height: 14px;\n  left: 50%;\n  margin-top: -45px;\n  margin-left: -8px;\n  -webkit-transform: rotate(45deg);\n  transform: rotate(45deg);\n  border-right: 0;\n  border-bottom: 0;\n  box-shadow: -3px -3px 7px -2px rgba(0, 0, 0, .24);\n}\n", ""]);
+	exports.push([module.id, ".ql-emoji {\n  width: 28px;\n}\n\n.emoji-container {\n  position: absolute;\n  width: 408px;\n  background-color: #fff;\n  z-index: 10;\n  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .24);\n  border-radius: 4px;\n  text-align: left;\n  visibility: hidden;\n}\n\n.emoji-container.show {\n  visibility: visible;\n}\n\n.emoji-panel {\n  padding: 10px 12px;\n  background-color: #fff;\n  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .24);\n  border-radius: 4px;\n}\n\n.emoji-toolbar {\n  height: 40px;\n  line-height: 40px;\n  padding-left: 10px;\n  background-color: #f8f8f8;\n  border: 0 solid rgba(0, 0, 0, .05);\n  border-top-width: 1px;\n  border-bottom-left-radius: 4px;\n  border-bottom-right-radius: 4px;\n}\n\n.emoji-toolbar .toolbar-item {\n  width: 54px;\n  text-align: center;\n  display: inline-block;\n  line-height: 40px;\n  height: 41px;\n  top: -1px;\n  cursor: pointer;\n  border-left: 1px solid transparent;\n  border-right: 1px solid transparent;\n}\n\n.emoji-list span.emoji-item {\n  padding: 4px;\n  user-select: none;\n  display: inline-block;\n  box-sizing: content-box;\n}\n\n.emoji-toolbar .toolbar-item img {\n  vertical-align: middle;\n  width: 20px;\n  height: 20px;\n}\n\n.emoji-toolbar .toolbar-item.active {\n  background-color: #fff;\n  border-color: inherit;\n}\n\n.emoji-list.emoji-icon span.emoji-item {\n  width: 24px;\n  height: 24px;\n}\n\n.emoji-list.emotion-icon span.emoji-item {\n  width: 56px;\n  height: 59px;\n}\n\n.emoji-list span.emoji-item:hover {\n  background-color: rgba(17, 139, 251, .05);\n  cursor: pointer;\n}\n\n.emoji-list span img {\n  width: 100%;\n  height: 100%;\n}\n\n.arrow-down {\n  position: absolute;\n  background: #f8f8f8;\n  width: 14px;\n  height: 14px;\n  left: 50%;\n  margin-top: -45px;\n  margin-left: -8px;\n  -webkit-transform: rotate(45deg);\n  transform: rotate(45deg);\n  border-right: 0;\n  border-bottom: 0;\n  box-shadow: -3px -3px 7px -2px rgba(0, 0, 0, .24);\n}\n", ""]);
 
 	// exports
 

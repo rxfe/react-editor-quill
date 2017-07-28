@@ -250,6 +250,8 @@ class QuillMention extends Component {
         const length = str.length + 1;
         this.STORE.bookmark = { index: sel.lastRange.index - length, length };
       }
+    } else {
+      this.runMatcher(false);
     }
   }
   insertWithElementNode (mentionContent) {
@@ -322,7 +324,13 @@ class QuillMention extends Component {
       left: cursorPosition.x,
       top: cursorPosition.y
     };
-    const { prefixCls, panelFormatter, loadingRender } = this.props;
+    const {
+      prefixCls,
+      panelFormatter,
+      loadingRender,
+      placeholder,
+      notfound
+    } = this.props;
     return (
       <div ref={target => this.targetEl = target}>
         <Panel
@@ -335,6 +343,8 @@ class QuillMention extends Component {
           isLoading={isLoading}
           matcherStr={matcherStr}
           loadingRender={loadingRender}
+          placeholder={placeholder}
+          notfound={notfound}
           ref={panel => this.panel = panel}
         />
       </div>
@@ -398,7 +408,9 @@ QuillMention.propTypes = {
    */
   insertMode: PropTypes.oneOf(["ELEMENT_NODE", "TEXT_NODE"]),
   quill: PropTypes.objectOf(PropTypes.any),
-  loadingRender: PropTypes.func
+  loadingRender: PropTypes.func,
+  placeholder: PropTypes.string,
+  notfound: PropTypes.string
 };
 QuillMention.defaultProps = {
   delimiter: "@",
