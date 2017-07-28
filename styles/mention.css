@@ -1,65 +1,122 @@
 .quill-mention {
-    position: relative
+  position: relative
 }
 
 .quill-mention-node {
-    padding: 0 2px;
-    background: 0 0;
-    border: 0;
-    color: #3C99D8
+  padding: 0 2px;
+  background: 0 0;
+  border: 0;
+  color: #3C99D8
 }
 
 .quill-mention-panel {
-    position: absolute;
-    margin: 0;
-    padding: 0;
-    background-color: #fff;
-    border: 1px solid #ededed;
-    box-shadow: 1px 1px 3px rgba(0,0,0,.2);
-    display: none;
-    z-index: 99;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 2px;
-    box-shadow: 0 0 4px hsla(0,0%,39%,.2);
-    line-height: 26px;
-    overflow: hidden;
-    overflow-y: auto;
-    max-height: 250px;
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+  border: 1px solid #ededed;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);
+  display: none;
+  z-index: 99;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  box-shadow: 0 0 4px hsla(0, 0%, 39%, .2);
+  line-height: 26px;
+  overflow: hidden;
+  overflow-y: auto;
+  max-height: 250px;
+  min-width: 100px;
+}
+
+.quill-mention-panel ul {
+  padding: 0px;
+  margin: 0px;
 }
 
 .quill-mention-panel-visible {
-    display: block
+  display: block
 }
 
 .quill-mention-panel-item {
-    display: block;
-    cursor: pointer;
-    padding: 6px 10px;
-    font-size: 1em;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    max-width: 300px;
+  display: block;
+  cursor: pointer;
+  padding: 6px 20px 6px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 300px;
 }
 
 .quill-mention-panel-item:first-child {
-    border-top: 0 none
+  border-top: 0 none
 }
-
-.quill-mention-panel-item-current,.quill-mention-panel-item:hover {
-    background-color: #dbeefe;
+.quill-mention-panel-item.quill-mention-panel-item-tips{
+  text-align: center;
+  height: 26px;
+  line-height: 26px;
+}
+.quill-mention-panel-item-current,
+.quill-mention-panel-item:hover {
+  background-color: #dbeefe;
 }
 
 .quill-mention-placeholder {
-    position: absolute;
-    top: 8px;
-    left: 10px;
-    color: rgba(0,0,0,.4)
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  color: rgba(0, 0, 0, .4)
 }
 
 input[type=button].quill-mention-node {
-    -webkit-appearance: button;
-    cursor: pointer;
-    outline: none;
+  -webkit-appearance: button;
+  cursor: pointer;
+  outline: none;
+}
+
+.loading-spinner {
+  text-align: center;
+  margin-top: 4px;
+}
+
+.loading-spinner .circular {
+  width: 20px;
+  height: 20px;
+  animation: loading-rotate 2s linear infinite
+}
+
+.loading-spinner .path {
+  animation: loading-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: #20a0ff;
+  stroke-linecap: round
+}
+
+.loading-fade-enter,
+.loading-fade-leave-active {
+  opacity: 0
+}
+
+@keyframes loading-rotate {
+  to {
+    transform: rotate(1turn)
+  }
+}
+
+@keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px
+  }
+  to {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px
+  }
 }

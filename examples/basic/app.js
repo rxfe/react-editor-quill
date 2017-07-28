@@ -14,7 +14,7 @@ import '../../styles/emoji.css';
 
 const formatter = data =>
   data.map(item => ({
-    text: `${item}`
+    text: `${item.label}`
   }));
 const defaultModules = {
   toolbar: [
@@ -54,9 +54,18 @@ class App extends React.Component {
       <Count limit={100} />,
       <Meniton
         source={(str, next) => {
-          next(source.filter(item => item.indexOf(str) > -1));
+          if (!str) return next([]);
+          return setTimeout(() => {
+            next(
+              source.filter(item => item.indexOf(str) > -1).map(item => ({
+                label: item,
+                value: item
+              }))
+            );
+          }, 1000);
         }}
         formatter={formatter}
+        matchRange={[2, 5]}
       />,
       <Meniton
         delimiter="#"

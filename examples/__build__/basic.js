@@ -59,7 +59,7 @@ webpackJsonp([0,1],[
 	var formatter = function formatter(data) {
 	  return data.map(function (item) {
 	    return {
-	      text: '' + item
+	      text: '' + item.label
 	    };
 	  });
 	};
@@ -99,11 +99,20 @@ webpackJsonp([0,1],[
 
 	      var plugins = [_react2.default.createElement(_emoji2.default, null), _react2.default.createElement(_count2.default, { limit: 100 }), _react2.default.createElement(_mention2.default, {
 	        source: function source(str, next) {
-	          next(_source.filter(function (item) {
-	            return item.indexOf(str) > -1;
-	          }));
+	          if (!str) return next([]);
+	          return setTimeout(function () {
+	            next(_source.filter(function (item) {
+	              return item.indexOf(str) > -1;
+	            }).map(function (item) {
+	              return {
+	                label: item,
+	                value: item
+	              };
+	            }));
+	          }, 1000);
 	        },
-	        formatter: formatter
+	        formatter: formatter,
+	        matchRange: [2, 5]
 	      }), _react2.default.createElement(_mention2.default, {
 	        delimiter: '#',
 	        mentionFormatter: function mentionFormatter(data) {
@@ -55669,6 +55678,7 @@ webpackJsonp([0,1],[
 	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 	}
 
+	var reg = /[\s]/;
 	if (!(0, _hasModule2.default)(_quill2.default, 'formats/mention')) {
 	  _quill2.default.register({
 	    'formats/mention': _ButtonBlot2.default
@@ -55697,6 +55707,9 @@ webpackJsonp([0,1],[
 	  } else {
 	    ret = false;
 	  }
+	  if (reg.test(ret)) {
+	    ret = false;
+	  }
 	  return ret;
 	}
 
@@ -55714,8 +55727,9 @@ webpackJsonp([0,1],[
 	        x: 0,
 	        y: 0
 	      },
-	      panelVisible: false,
-	      panelIdx: 0
+	      panelIdx: 0,
+	      matcherStr: false,
+	      isLoading: false
 	    };
 	    _this.selectItem = _this.selectItem.bind(_this);
 	    return _this;
@@ -55734,10 +55748,13 @@ webpackJsonp([0,1],[
 	      this.quill.on('selection-change', this.handleDefaultKeyup.bind(this));
 	      this.quill.root.addEventListener('blur', this.hidePanel.bind(this));
 	      this.quill.root.addEventListener('keydown', this.onKeydown.bind(this));
-	      this.quill.keyboard.bindings[13].unshift({ key: 13, shiftKey: null, handler: this.handleEnter.bind(this) });
+	      this.quill.keyboard.bindings[13].unshift({
+	        key: 13,
+	        shiftKey: null,
+	        handler: this.handleEnter.bind(this)
+	      });
 	      this.quill.root.addEventListener('keyup', function (e) {
 	        _this2.onKeyup(e);
-	        // this.onPanelKeyup(e)
 	      });
 	    }
 	  }, {
@@ -55748,13 +55765,8 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'componentDidUpdate',
 	    value: function componentDidUpdate(prevProps, prevState) {
-	      if (prevState.mentionList.length !== this.state.mentionList.length) {
-	        this.setState({ // eslint-disable-line
-	          panelVisible: this.state.mentionList.length > 0
-	        });
-	      }
-	      if (!prevState.panelVisible && this.state.panelVisible) {
-	        this.setState({ // eslint-disable-line
+	      if (prevState.matcherStr === false && this.state.matcherStr !== false) {
+	        this.setState({
 	          panelIdx: 0
 	        });
 	      }
@@ -55763,11 +55775,11 @@ webpackJsonp([0,1],[
 	    key: 'onPanelKeyup',
 	    value: function onPanelKeyup(e) {
 	      var _state = this.state,
-	          panelVisible = _state.panelVisible,
+	          matcherStr = _state.matcherStr,
 	          panelIdx = _state.panelIdx,
 	          mentionList = _state.mentionList;
 
-	      if (panelVisible) {
+	      if (matcherStr !== false) {
 	        var count = mentionList.length;
 	        switch (e.keyCode) {
 	          case KEYCODE.UP:
@@ -55784,9 +55796,9 @@ webpackJsonp([0,1],[
 	            // this.selectItem(mentionList[panelIdx]);
 	            break;
 	          default:
-	            this.setState({
-	              mentionList: []
-	            });
+	            // this.setState({
+	            //   matcherStr: false
+	            // });
 	            break;
 	        }
 	      }
@@ -55794,8 +55806,7 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'onKeydown',
 	    value: function onKeydown(e) {
-	      var panelVisible = this.state.panelVisible;
-
+	      var panelVisible = this.isPanelVisible();
 	      this.onPanelKeyup(e);
 	      switch (e.keyCode) {
 	        case KEYCODE.UP:
@@ -55818,8 +55829,7 @@ webpackJsonp([0,1],[
 	  }, {
 	    key: 'onKeyup',
 	    value: function onKeyup(e) {
-	      var panelVisible = this.state.panelVisible;
-
+	      var panelVisible = this.isPanelVisible();
 	      switch (e.keyCode) {
 	        case KEYCODE.UP:
 	        case KEYCODE.DOWN:
@@ -55847,13 +55857,18 @@ webpackJsonp([0,1],[
 	      });
 	    }
 	  }, {
+	    key: 'isPanelVisible',
+	    value: function isPanelVisible() {
+	      return this.state.matcherStr !== false;
+	    }
+	  }, {
 	    key: 'handleEnter',
 	    value: function handleEnter() {
 	      var _state2 = this.state,
-	          panelVisible = _state2.panelVisible,
 	          panelIdx = _state2.panelIdx,
 	          mentionList = _state2.mentionList;
 
+	      var panelVisible = this.isPanelVisible();
 	      if (panelVisible) {
 	        this.selectItem(mentionList[panelIdx]);
 	        return false;
@@ -55867,18 +55882,25 @@ webpackJsonp([0,1],[
 	          source = _props.source,
 	          matchRange = _props.matchRange;
 
-	      this.setState({
-	        panelVisible: false,
-	        mentionList: []
-	      });
 	      if (str.length >= matchRange[0] && str.length <= matchRange[1]) {
+	        this.setState({
+	          matcherStr: str
+	        });
 	        if (Array.isArray(source)) {
 	          this.next(source.filter(function (item) {
 	            return item.indexOf(str) !== -1;
 	          }));
 	        } else {
+	          this.setState({
+	            isLoading: true,
+	            mentionList: []
+	          });
 	          source(str, this.next.bind(this));
 	        }
+	      } else {
+	        this.setState({
+	          matcherStr: false
+	        });
 	      }
 	    }
 	  }, {
@@ -55887,6 +55909,11 @@ webpackJsonp([0,1],[
 	      var result = matchResult;
 	      if (this.props.formatter) {
 	        result = this.props.formatter(result);
+	      }
+	      if (this.state.isLoading) {
+	        this.setState({
+	          isLoading: false
+	        });
 	      }
 	      this.setState({
 	        mentionList: result
@@ -55900,6 +55927,10 @@ webpackJsonp([0,1],[
 	      if (this.matchTimer) {
 	        clearTimeout(this.matchTimer);
 	      }
+	      if (str === false) {
+	        this.matcher(str);
+	        return;
+	      }
 	      this.matchTimer = setTimeout(function () {
 	        _this3.matcher(str);
 	      }, this.props.delay);
@@ -55911,7 +55942,7 @@ webpackJsonp([0,1],[
 
 	      setTimeout(function () {
 	        _this4.setState({
-	          panelVisible: false
+	          matcherStr: false
 	        });
 	      }, 200);
 	    }
@@ -56012,24 +56043,34 @@ webpackJsonp([0,1],[
 	    value: function render() {
 	      var _this5 = this;
 
+	      var _state3 = this.state,
+	          cursorPosition = _state3.cursorPosition,
+	          isLoading = _state3.isLoading,
+	          panelIdx = _state3.panelIdx,
+	          mentionList = _state3.mentionList,
+	          matcherStr = _state3.matcherStr;
+
 	      var panelPosition = {
-	        left: this.state.cursorPosition.x,
-	        top: this.state.cursorPosition.y
+	        left: cursorPosition.x,
+	        top: cursorPosition.y
 	      };
 	      var _props3 = this.props,
 	          prefixCls = _props3.prefixCls,
-	          panelFormatter = _props3.panelFormatter;
+	          panelFormatter = _props3.panelFormatter,
+	          loadingRender = _props3.loadingRender;
 
 	      return _react2.default.createElement('div', { ref: function ref(target) {
 	          return _this5.targetEl = target;
 	        } }, _react2.default.createElement(_Panel2.default, {
 	        prefixCls: prefixCls,
-	        visible: this.state.panelVisible,
-	        idx: this.state.panelIdx,
-	        list: this.state.mentionList,
+	        idx: panelIdx,
+	        list: mentionList,
 	        onSelect: this.selectItem,
 	        formatter: panelFormatter,
 	        style: panelPosition,
+	        isLoading: isLoading,
+	        matcherStr: matcherStr,
+	        loadingRender: loadingRender,
 	        ref: function ref(panel) {
 	          return _this5.panel = panel;
 	        }
@@ -56095,12 +56136,13 @@ webpackJsonp([0,1],[
 	   * @i18n {en-US} `ELEMENT_NODE`
 	   * will insert mention content with a button, `TEXT_NODE` will insert with a text node
 	   */
-	  insertMode: _react.PropTypes.oneOf(['ELEMENT_NODE', 'TEXT_NODE']),
-	  quill: _react.PropTypes.objectOf(_react.PropTypes.any)
+	  insertMode: _react.PropTypes.oneOf(["ELEMENT_NODE", "TEXT_NODE"]),
+	  quill: _react.PropTypes.objectOf(_react.PropTypes.any),
+	  loadingRender: _react.PropTypes.func
 	};
 	QuillMention.defaultProps = {
-	  delimiter: '@',
-	  prefixCls: 'quill-mention',
+	  delimiter: "@",
+	  prefixCls: "quill-mention",
 	  source: [],
 	  delay: 100,
 	  matchRange: [0, 20],
@@ -56115,7 +56157,7 @@ webpackJsonp([0,1],[
 	  },
 	  onChange: function onChange() {},
 	  onAdd: function onAdd() {},
-	  insertMode: 'ELEMENT_NODE'
+	  insertMode: "ELEMENT_NODE"
 	};
 	exports.default = QuillMention;
 	module.exports = exports['default'];
@@ -56184,8 +56226,8 @@ webpackJsonp([0,1],[
 	  _createClass(Panel, [{
 	    key: 'componentDidUpdate',
 	    value: function componentDidUpdate(prevProps) {
-	      if (prevProps.visible === false && this.props.visible === true) {
-	        this.panel.scrollTop = 0;
+	      if (prevProps.matcherStr === false && this.props.matcherStr) {
+	        if (this.panel) this.panel.scrollTop = 0;
 	      }
 	      if (this.props.idx !== prevProps.idx) {
 	        this.maybeScrollItemIntoView();
@@ -56216,21 +56258,28 @@ webpackJsonp([0,1],[
 	          onSelect = _props.onSelect,
 	          list = _props.list,
 	          style = _props.style,
-	          visible = _props.visible,
 	          idx = _props.idx,
 	          formatter = _props.formatter,
-	          prefixCls = _props.prefixCls;
+	          prefixCls = _props.prefixCls,
+	          placeholder = _props.placeholder,
+	          notfound = _props.notfound,
+	          matcherStr = _props.matcherStr,
+	          isLoading = _props.isLoading,
+	          loadingRender = _props.loadingRender;
 
 	      var clsObj = {};
 	      clsObj[prefixCls + '-panel'] = true;
-	      clsObj[prefixCls + '-panel-visible'] = visible;
+	      clsObj[prefixCls + '-panel-visible'] = matcherStr !== false;
 	      var cls = (0, _classnames2.default)(clsObj);
-	      return _react2.default.createElement('ul', { className: cls, style: style, ref: function ref(e) {
+	      var tips = matcherStr ? notfound : placeholder;
+	      var itemPrefixCls = prefixCls + '-panel-item';
+	      var loadingEl = loadingRender ? loadingRender() : _react2.default.createElement('div', { className: 'loading-spinner' }, _react2.default.createElement('svg', { viewBox: '25 25 50 50', className: 'circular' }, _react2.default.createElement('circle', { cx: '50', cy: '50', r: '20', fill: 'none', className: 'path' })));
+	      return _react2.default.createElement('div', { className: cls, style: style, ref: function ref(e) {
 	          return _this2.panel = e;
-	        } }, list.map(function (item, index) {
+	        } }, !list.length ? _react2.default.createElement('div', { className: itemPrefixCls + ' ' + itemPrefixCls + '-tips' }, isLoading ? loadingEl : tips) : _react2.default.createElement('ul', null, list.map(function (item, index) {
 	        var itemClsObj = {};
-	        itemClsObj[prefixCls + '-panel-item'] = true;
-	        itemClsObj[prefixCls + '-panel-item-current'] = idx === index;
+	        itemClsObj[itemPrefixCls] = true;
+	        itemClsObj[itemPrefixCls + '-current'] = idx === index;
 	        var itemCls = (0, _classnames2.default)(itemClsObj);
 	        return _react2.default.createElement('li', { // eslint-disable-line
 	          className: itemCls,
@@ -56242,7 +56291,7 @@ webpackJsonp([0,1],[
 	            return onSelect(item);
 	          }
 	        }, _react2.default.createElement('div', null, formatter(item)));
-	      }));
+	      })));
 	    }
 	  }]);
 
@@ -56254,9 +56303,13 @@ webpackJsonp([0,1],[
 	  list: _react.PropTypes.arrayOf(_react.PropTypes.any),
 	  style: _react.PropTypes.objectOf(_react.PropTypes.any),
 	  idx: _react.PropTypes.number,
-	  visible: _react.PropTypes.bool.isRequired,
 	  onSelect: _react.PropTypes.func,
-	  formatter: _react.PropTypes.func
+	  formatter: _react.PropTypes.func,
+	  placeholder: _react.PropTypes.string,
+	  notfound: _react.PropTypes.string,
+	  isLoading: _react.PropTypes.bool,
+	  matcherStr: _react.PropTypes.oneOfType([_react.PropTypes.bool, _react.PropTypes.string]),
+	  loadingRender: _react.PropTypes.func
 	};
 	Panel.defaultProps = {
 	  prefixCls: '',
@@ -56264,7 +56317,9 @@ webpackJsonp([0,1],[
 	  style: {},
 	  idx: 0,
 	  onSelect: function onSelect() {},
-	  formatter: ''
+	  formatter: '',
+	  placeholder: '请输入内容',
+	  notfound: '无数据'
 	};
 	exports.default = Panel;
 	module.exports = exports['default'];
@@ -57639,7 +57694,7 @@ webpackJsonp([0,1],[
 
 
 	// module
-	exports.push([module.id, ".quill-mention {\n    position: relative\n}\n\n.quill-mention-node {\n    padding: 0 2px;\n    background: 0 0;\n    border: 0;\n    color: #3C99D8\n}\n\n.quill-mention-panel {\n    position: absolute;\n    margin: 0;\n    padding: 0;\n    background-color: #fff;\n    border: 1px solid #ededed;\n    box-shadow: 1px 1px 3px rgba(0,0,0,.2);\n    display: none;\n    z-index: 99;\n    background: #fff;\n    border: 1px solid #ddd;\n    border-radius: 2px;\n    box-shadow: 0 0 4px hsla(0,0%,39%,.2);\n    line-height: 26px;\n    overflow: hidden;\n    overflow-y: auto;\n    max-height: 250px;\n}\n\n.quill-mention-panel-visible {\n    display: block\n}\n\n.quill-mention-panel-item {\n    display: block;\n    cursor: pointer;\n    padding: 6px 10px;\n    font-size: 1em;\n    cursor: pointer;\n    white-space: nowrap;\n    overflow: hidden;\n    max-width: 300px;\n}\n\n.quill-mention-panel-item:first-child {\n    border-top: 0 none\n}\n\n.quill-mention-panel-item-current,.quill-mention-panel-item:hover {\n    background-color: #dbeefe;\n}\n\n.quill-mention-placeholder {\n    position: absolute;\n    top: 8px;\n    left: 10px;\n    color: rgba(0,0,0,.4)\n}\n\ninput[type=button].quill-mention-node {\n    -webkit-appearance: button;\n    cursor: pointer;\n    outline: none;\n}\n", ""]);
+	exports.push([module.id, ".quill-mention {\n  position: relative\n}\n\n.quill-mention-node {\n  padding: 0 2px;\n  background: 0 0;\n  border: 0;\n  color: #3C99D8\n}\n\n.quill-mention-panel {\n  position: absolute;\n  margin: 0;\n  padding: 0;\n  background-color: #fff;\n  border: 1px solid #ededed;\n  box-shadow: 1px 1px 3px rgba(0, 0, 0, .2);\n  display: none;\n  z-index: 99;\n  background: #fff;\n  border: 1px solid #ddd;\n  border-radius: 2px;\n  box-shadow: 0 0 4px hsla(0, 0%, 39%, .2);\n  line-height: 26px;\n  overflow: hidden;\n  overflow-y: auto;\n  max-height: 250px;\n  min-width: 100px;\n}\n\n.quill-mention-panel ul {\n  padding: 0px;\n  margin: 0px;\n}\n\n.quill-mention-panel-visible {\n  display: block\n}\n\n.quill-mention-panel-item {\n  display: block;\n  cursor: pointer;\n  padding: 6px 20px 6px 10px;\n  font-size: 14px;\n  cursor: pointer;\n  white-space: nowrap;\n  overflow: hidden;\n  max-width: 300px;\n}\n\n.quill-mention-panel-item:first-child {\n  border-top: 0 none\n}\n.quill-mention-panel-item.quill-mention-panel-item-tips{\n  text-align: center;\n  height: 26px;\n  line-height: 26px;\n}\n.quill-mention-panel-item-current,\n.quill-mention-panel-item:hover {\n  background-color: #dbeefe;\n}\n\n.quill-mention-placeholder {\n  position: absolute;\n  top: 8px;\n  left: 10px;\n  color: rgba(0, 0, 0, .4)\n}\n\ninput[type=button].quill-mention-node {\n  -webkit-appearance: button;\n  cursor: pointer;\n  outline: none;\n}\n\n.loading-spinner {\n  text-align: center;\n  margin-top: 4px;\n}\n\n.loading-spinner .circular {\n  width: 20px;\n  height: 20px;\n  animation: loading-rotate 2s linear infinite\n}\n\n.loading-spinner .path {\n  animation: loading-dash 1.5s ease-in-out infinite;\n  stroke-dasharray: 90, 150;\n  stroke-dashoffset: 0;\n  stroke-width: 2;\n  stroke: #20a0ff;\n  stroke-linecap: round\n}\n\n.loading-fade-enter,\n.loading-fade-leave-active {\n  opacity: 0\n}\n\n@keyframes loading-rotate {\n  to {\n    transform: rotate(1turn)\n  }\n}\n\n@keyframes loading-dash {\n  0% {\n    stroke-dasharray: 1, 200;\n    stroke-dashoffset: 0\n  }\n  50% {\n    stroke-dasharray: 90, 150;\n    stroke-dashoffset: -40px\n  }\n  to {\n    stroke-dasharray: 90, 150;\n    stroke-dashoffset: -120px\n  }\n}\n", ""]);
 
 	// exports
 

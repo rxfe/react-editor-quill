@@ -22,6 +22,7 @@ module.exports = {
     "import/no-extraneous-dependencies": [2, {"devDependencies": true}],
     "react/jsx-filename-extension": ["error", {"extensions": [".js"]}],
     "react/require-default-props": [0],
-    "class-methods-use-this": 0
+    "class-methods-use-this": 0,
+    "react/no-did-update-set-state": 1
   },
 };

@@ -4,6 +4,7 @@ import Panel from './Panel';
 import isQuillHasModule from '../../utils/hasModule';
 import ButtonBlot from './ButtonBlot';
 
+const reg = /[\s]/;
 if (!isQuillHasModule(Quill, 'formats/mention')) {
   Quill.register({
     'formats/mention': ButtonBlot
@@ -29,6 +30,9 @@ function parseStrByDelimiter (str = '', delimiter = '@') {
   } else {
     ret = false;
   }
+  if (reg.test(ret)) {
+    ret = false;
+  }
   return ret;
 }
 
@@ -39,10 +43,11 @@ class QuillMention extends Component {
       mentionList: [],
       cursorPosition: {
         x: 0,
-        y: 0,
+        y: 0
       },
-      panelVisible: false,
       panelIdx: 0,
+      matcherStr: false,
+      isLoading: false
     };
     this.selectItem = this.selectItem.bind(this);
   }
@@ -55,10 +60,13 @@ class QuillMention extends Component {
     this.quill.on('selection-change', this.handleDefaultKeyup.bind(this));
     this.quill.root.addEventListener('blur', this.hidePanel.bind(this));
     this.quill.root.addEventListener('keydown', this.onKeydown.bind(this));
-    this.quill.keyboard.bindings[13].unshift({ key: 13, shiftKey: null, handler: this.handleEnter.bind(this) });
+    this.quill.keyboard.bindings[13].unshift({
+      key: 13,
+      shiftKey: null,
+      handler: this.handleEnter.bind(this)
+    });
     this.quill.root.addEventListener('keyup', (e) => {
       this.onKeyup(e);
-      // this.onPanelKeyup(e)
     });
   }
 
@@ -66,45 +74,40 @@ class QuillMention extends Component {
     this.STORE = {};
   }
   componentDidUpdate (prevProps, prevState) {
-    if (prevState.mentionList.length !== this.state.mentionList.length) {
-      this.setState({ // eslint-disable-line
-        panelVisible: this.state.mentionList.length > 0,
-      });
-    }
-    if (!prevState.panelVisible && this.state.panelVisible) {
-      this.setState({ // eslint-disable-line
-        panelIdx: 0,
+    if (prevState.matcherStr === false && this.state.matcherStr !== false) {
+      this.setState({
+        panelIdx: 0
       });
     }
   }
   onPanelKeyup (e) {
-    const { panelVisible, panelIdx, mentionList } = this.state;
-    if (panelVisible) {
+    const { matcherStr, panelIdx, mentionList } = this.state;
+    if (matcherStr !== false) {
       const count = mentionList.length;
       switch (e.keyCode) {
         case KEYCODE.UP:
           this.setState({
-            panelIdx: panelIdx === 0 ? count - 1 : panelIdx - 1,
+            panelIdx: panelIdx === 0 ? count - 1 : panelIdx - 1
           });
           break;
         case KEYCODE.DOWN:
           this.setState({
-            panelIdx: panelIdx === count - 1 ? 0 : panelIdx + 1,
+            panelIdx: panelIdx === count - 1 ? 0 : panelIdx + 1
           });
           break;
         case KEYCODE.ENTER:
           // this.selectItem(mentionList[panelIdx]);
           break;
         default:
-          this.setState({
-            mentionList: [],
-          });
+          // this.setState({
+          //   matcherStr: false
+          // });
           break;
       }
     }
   }
   onKeydown (e) {
-    const { panelVisible } = this.state;
+    const panelVisible = this.isPanelVisible();
     this.onPanelKeyup(e);
     switch (e.keyCode) {
       case KEYCODE.UP:
@@ -125,7 +128,7 @@ class QuillMention extends Component {
     }
   }
   onKeyup (e) {
-    const { panelVisible } = this.state;
+    const panelVisible = this.isPanelVisible();
     switch (e.keyCode) {
       case KEYCODE.UP:
       case KEYCODE.DOWN:
@@ -145,14 +148,18 @@ class QuillMention extends Component {
     const client = this.quill.container.parentNode.getBoundingClientRect();
     const position = {
       x: pos.left - client.left,
-      y: (pos.top - client.top) + 20,
+      y: pos.top - client.top + 20
     };
     this.setState({
-      cursorPosition: position,
+      cursorPosition: position
     });
   }
+  isPanelVisible () {
+    return this.state.matcherStr !== false;
+  }
   handleEnter () {
-    const { panelVisible, panelIdx, mentionList } = this.state;
+    const { panelIdx, mentionList } = this.state;
+    const panelVisible = this.isPanelVisible();
     if (panelVisible) {
       this.selectItem(mentionList[panelIdx]);
       return false;
@@ -161,16 +168,23 @@ class QuillMention extends Component {
   }
   matcher (str) {
     const { source, matchRange } = this.props;
-    this.setState({
-      panelVisible: false,
-      mentionList: [],
-    });
     if (str.length >= matchRange[0] && str.length <= matchRange[1]) {
+      this.setState({
+        matcherStr: str
+      });
       if (Array.isArray(source)) {
         this.next(source.filter(item => item.indexOf(str) !== -1));
       } else {
+        this.setState({
+          isLoading: true,
+          mentionList: []
+        });
         source(str, this.next.bind(this));
       }
+    } else {
+      this.setState({
+        matcherStr: false
+      });
     }
   }
 
@@ -179,13 +193,22 @@ class QuillMention extends Component {
     if (this.props.formatter) {
       result = this.props.formatter(result);
     }
+    if (this.state.isLoading) {
+      this.setState({
+        isLoading: false
+      });
+    }
     this.setState({
-      mentionList: result,
+      mentionList: result
     });
   }
   runMatcher (str) {
     if (this.matchTimer) {
       clearTimeout(this.matchTimer);
+    }
+    if (str === false) {
+      this.matcher(str);
+      return;
     }
     this.matchTimer = setTimeout(() => {
       this.matcher(str);
@@ -194,7 +217,7 @@ class QuillMention extends Component {
   hidePanel () {
     setTimeout(() => {
       this.setState({
-        panelVisible: false
+        matcherStr: false
       });
     }, 200);
   }
@@ -236,11 +259,13 @@ class QuillMention extends Component {
     }
     this.quill.on('selection-change', this.handleDefaultKeyup.bind(this));
     const range = this.quill.getSelection(true);
-    this.quill.updateContents(new Delta()
-      .retain(range.index)
-      .delete(range.length)
-      .insert({ mention: mentionContent })
-      .insert(' '));
+    this.quill.updateContents(
+      new Delta()
+        .retain(range.index)
+        .delete(range.length)
+        .insert({ mention: mentionContent })
+        .insert(' ')
+    );
     this.quill.setSelection(range.index + 2, 0);
   }
 
@@ -251,11 +276,13 @@ class QuillMention extends Component {
     }
     this.quill.on('selection-change', this.handleDefaultKeyup.bind(this));
     const range = this.quill.getSelection(true);
-    this.quill.updateContents(new Delta()
-      .retain(range.index)
-      .delete(range.length)
-      .insert(mentionContent)
-      .insert(' '));
+    this.quill.updateContents(
+      new Delta()
+        .retain(range.index)
+        .delete(range.length)
+        .insert(mentionContent)
+        .insert(' ')
+    );
     this.quill.setSelection(range.index + mentionContent.length + 1, 0);
   }
   insert (mentionContent) {
@@ -280,27 +307,38 @@ class QuillMention extends Component {
   selectItem (data) {
     this.insertMentionData(data);
     this.setState({
-      mentionList: [],
+      mentionList: []
     });
   }
   render () {
+    const {
+      cursorPosition,
+      isLoading,
+      panelIdx,
+      mentionList,
+      matcherStr
+    } = this.state;
     const panelPosition = {
-      left: this.state.cursorPosition.x,
-      top: this.state.cursorPosition.y,
+      left: cursorPosition.x,
+      top: cursorPosition.y
     };
-    const { prefixCls, panelFormatter } = this.props;
-    return (<div ref={target => (this.targetEl = target)}>
-      <Panel
-        prefixCls={prefixCls}
-        visible={this.state.panelVisible}
-        idx={this.state.panelIdx}
-        list={this.state.mentionList}
-        onSelect={this.selectItem}
-        formatter={panelFormatter}
-        style={panelPosition}
-        ref={panel => (this.panel = panel)}
-      />
-    </div>);
+    const { prefixCls, panelFormatter, loadingRender } = this.props;
+    return (
+      <div ref={target => this.targetEl = target}>
+        <Panel
+          prefixCls={prefixCls}
+          idx={panelIdx}
+          list={mentionList}
+          onSelect={this.selectItem}
+          formatter={panelFormatter}
+          style={panelPosition}
+          isLoading={isLoading}
+          matcherStr={matcherStr}
+          loadingRender={loadingRender}
+          ref={panel => this.panel = panel}
+        />
+      </div>
+    );
   }
 }
 QuillMention.displayName = 'QuillMention';
@@ -316,10 +354,7 @@ QuillMention.propTypes = {
    * @i18n {zh-CN} 定义数据源
    * @i18n {en-US} data source for mention content
    */
-  source: PropTypes.oneOfType([
-    React.PropTypes.array,
-    React.PropTypes.func,
-  ]),
+  source: PropTypes.oneOfType([React.PropTypes.array, React.PropTypes.func]),
   /**
    * @i18n {zh-CN} 数据源查询延时
    * @i18n {en-US} debounce of the request to data source
@@ -361,12 +396,13 @@ QuillMention.propTypes = {
    * @i18n {en-US} `ELEMENT_NODE`
    * will insert mention content with a button, `TEXT_NODE` will insert with a text node
    */
-  insertMode: PropTypes.oneOf(['ELEMENT_NODE', 'TEXT_NODE']),
-  quill: PropTypes.objectOf(PropTypes.any)
-}
+  insertMode: PropTypes.oneOf(["ELEMENT_NODE", "TEXT_NODE"]),
+  quill: PropTypes.objectOf(PropTypes.any),
+  loadingRender: PropTypes.func
+};
 QuillMention.defaultProps = {
-  delimiter: '@',
-  prefixCls: 'quill-mention',
+  delimiter: "@",
+  prefixCls: "quill-mention",
   source: [],
   delay: 100,
   matchRange: [0, 20],
@@ -375,6 +411,6 @@ QuillMention.defaultProps = {
   panelFormatter: data => `${data.text}`,
   onChange: () => {},
   onAdd: () => {},
-  insertMode: 'ELEMENT_NODE',
-}
-export default QuillMention
+  insertMode: "ELEMENT_NODE"
+};
+export default QuillMention;
