@@ -47,6 +47,7 @@
   white-space: nowrap;
   overflow: hidden;
   max-width: 300px;
+  box-sizing: content-box;
 }
 
 .quill-mention-panel-item:first-child {

@@ -51,6 +51,7 @@
   padding: 4px;
   user-select: none;
   display: inline-block;
+  box-sizing: content-box;
 }
 
 .emoji-toolbar .toolbar-item img {
