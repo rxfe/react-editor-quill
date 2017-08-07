@@ -4,6 +4,7 @@ import { PropTypes } from 'react';
 const Delta = Quill.import('delta');
 
 function insertImage (file) {
+  if (!this.validator) return null;
   const editor = this.quill;
   const dateTime = new Date().getTime().toString();
   const range = editor.getSelection(true);
@@ -13,21 +14,18 @@ function insertImage (file) {
     // range.length contributes to delta.length()
     // 更新编辑器内容
     editor.updateContents(
-      new Delta()
-        .retain(range.index)
-        .delete(range.length)
-        .insert(
-          { image: this.defaultImg },
+      new Delta().retain(range.index).delete(range.length).insert(
+        { image: this.defaultImg },
         {
           alt: dateTime,
           width: this.defaultWidth,
           height: this.defaultHeight
         }
-        ),
+      ),
       'user'
     );
     this.quill.setSelection(
-      (range.index - range.length) + 1,
+      range.index - range.length + 1,
       Quill.sources.SILENT
     );
     this.quill.scrollingContainer.scrollTop = scrollTop;
@@ -102,11 +100,13 @@ export default function ImageUpload (props) {
   return null;
 }
 ImageUpload.propTypes = {
-  uploadFile: PropTypes.func.isRequired
+  uploadFile: PropTypes.func.isRequired,
+  validator: PropTypes.func
   // quill: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 ImageUpload.defaultProps = {
   defaultImg: 'http://file.digitaling.com/eImg/uimages/20150907/1441607669881619.gif',
   defaultWidth: 200,
-  defaultHeight: 150
+  defaultHeight: 150,
+  validator: () => true
 };
