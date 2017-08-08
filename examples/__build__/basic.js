@@ -113,12 +113,21 @@ webpackJsonp([0,1],[
 	        },
 	        formatter: formatter,
 	        matchRange: [0, 5],
+	        mentionFormatter: function mentionFormatter(data) {
+	          return {
+	            label: data.text,
+	            value: data.text
+	          };
+	        },
 	        placeholder: '123213213',
 	        notfound: 'notfound'
 	      }), _react2.default.createElement(_mention2.default, {
 	        delimiter: '#',
 	        mentionFormatter: function mentionFormatter(data) {
-	          return '#' + data.text + '#';
+	          return {
+	            label: '#' + data.text + '#',
+	            value: 'data.text'
+	          };
 	        },
 	        source: _source,
 	        formatter: formatter,
@@ -55987,27 +55996,27 @@ webpackJsonp([0,1],[
 	    }
 	  }, {
 	    key: 'insertWithElementNode',
-	    value: function insertWithElementNode(mentionContent) {
+	    value: function insertWithElementNode(mentionData) {
 	      this.quill.off('selection-change');
 	      if (this.STORE.bookmark) {
 	        this.quill.selection.setRange(this.STORE.bookmark);
 	      }
 	      this.quill.on('selection-change', this.handleDefaultKeyup.bind(this));
 	      var range = this.quill.getSelection(true);
-	      this.quill.updateContents(new Delta().retain(range.index).delete(range.length).insert({ mention: mentionContent }).insert(' '));
+	      this.quill.updateContents(new Delta().retain(range.index).delete(range.length).insert({ mention: mentionData.label }, { id: mentionData.value }).insert(' '));
 	      this.quill.setSelection(range.index + 2, 0);
 	    }
 	  }, {
 	    key: 'insertWithTextNode',
-	    value: function insertWithTextNode(mentionContent) {
+	    value: function insertWithTextNode(mentionData) {
 	      this.quill.off('selection-change');
 	      if (this.STORE.bookmark) {
 	        this.quill.selection.setRange(this.STORE.bookmark);
 	      }
 	      this.quill.on('selection-change', this.handleDefaultKeyup.bind(this));
 	      var range = this.quill.getSelection(true);
-	      this.quill.updateContents(new Delta().retain(range.index).delete(range.length).insert(mentionContent).insert(' '));
-	      this.quill.setSelection(range.index + mentionContent.length + 1, 0);
+	      this.quill.updateContents(new Delta().retain(range.index).delete(range.length).insert(mentionData.label).insert(' '));
+	      this.quill.setSelection(range.index + mentionData.label.length + 1, 0);
 	    }
 	  }, {
 	    key: 'insert',
@@ -56031,9 +56040,9 @@ webpackJsonp([0,1],[
 	          mentionFormatter = _props2.mentionFormatter,
 	          onAdd = _props2.onAdd;
 
-	      var insertContent = mentionFormatter(mentionData);
-	      this.insert(insertContent);
-	      onAdd(insertContent, mentionData);
+	      var formatterResult = mentionFormatter(mentionData);
+	      this.insert(formatterResult);
+	      onAdd(formatterResult, mentionData);
 	    }
 	  }, {
 	    key: 'selectItem',
@@ -56161,7 +56170,10 @@ webpackJsonp([0,1],[
 	    return data;
 	  },
 	  mentionFormatter: function mentionFormatter(data) {
-	    return '@' + data.text;
+	    return {
+	      label: '@' + data.text,
+	      value: '@' + data.text
+	    };
 	  },
 	  panelFormatter: function panelFormatter(data) {
 	    return '' + data.text;
@@ -56491,6 +56503,8 @@ webpackJsonp([0,1],[
 	    value: function format(name, value) {
 	      if (name === 'mention' && value) {
 	        this.domNode.dataset.value = value;
+	      } else if (name === 'id' && value) {
+	        this.domNode.dataset.id = value;
 	      } else {
 	        _get(ButtonBlot.prototype.__proto__ || Object.getPrototypeOf(ButtonBlot.prototype), 'format', this).call(this, name, value);
 	      }
@@ -56576,6 +56590,7 @@ webpackJsonp([0,1],[
 	function insertImage(file) {
 	  var _this = this;
 
+	  if (!this.validator) return null;
 	  var editor = this.quill;
 	  var dateTime = new Date().getTime().toString();
 	  var range = editor.getSelection(true);
@@ -56660,13 +56675,17 @@ webpackJsonp([0,1],[
 	  return null;
 	}
 	ImageUpload.propTypes = {
-	  uploadFile: _react.PropTypes.func.isRequired
+	  uploadFile: _react.PropTypes.func.isRequired,
+	  validator: _react.PropTypes.func
 	  // quill: PropTypes.objectOf(PropTypes.any).isRequired,
 	};
 	ImageUpload.defaultProps = {
 	  defaultImg: 'http://file.digitaling.com/eImg/uimages/20150907/1441607669881619.gif',
 	  defaultWidth: 200,
-	  defaultHeight: 150
+	  defaultHeight: 150,
+	  validator: function validator() {
+	    return true;
+	  }
 	};
 	module.exports = exports['default'];
 
@@ -56931,487 +56950,487 @@ webpackJsonp([0,1],[
 	});
 	exports.default = [{
 	  className: 'emoji-icon',
-	  src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/navigation/emoji@2x.png',
+	  src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/navigation/emoji@2x.png',
 	  type: 'emoji',
 	  width: 24,
 	  height: 24,
 	  children: [{
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_0.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_0.png',
 	    alt: '[微笑]',
 	    title: '微笑'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_1.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_1.png',
 	    alt: '[撇嘴]',
 	    title: '撇嘴'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_2.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_2.png',
 	    alt: '[色]',
 	    title: '色'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_3.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_3.png',
 	    alt: '[发呆]',
 	    title: '发呆'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_4.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_4.png',
 	    alt: '[得意]',
 	    title: '得意'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_5.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_5.png',
 	    alt: '[流泪]',
 	    title: '流泪'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_6.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_6.png',
 	    alt: '[害羞]',
 	    title: '害羞'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_7.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_7.png',
 	    alt: '[闭嘴]',
 	    title: '闭嘴'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_8.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_8.png',
 	    alt: '[睡]',
 	    title: '睡'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_9.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_9.png',
 	    alt: '[大哭]',
 	    title: '大哭'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_10.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_10.png',
 	    alt: '[尴尬]',
 	    title: '尴尬'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_11.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_11.png',
 	    alt: '[发怒]',
 	    title: '发怒'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_12.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_12.png',
 	    alt: '[调皮]',
 	    title: '调皮'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_13.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_13.png',
 	    alt: '[呲牙]',
 	    title: '呲牙'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_14.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_14.png',
 	    alt: '[惊讶]',
 	    title: '惊讶'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_15.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_15.png',
 	    alt: '[难过]',
 	    title: '难过'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_16.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_16.png',
 	    alt: '[酷]',
 	    title: '酷'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_17.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_17.png',
 	    alt: '[冷汗]',
 	    title: '冷汗'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_18.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_18.png',
 	    alt: '[抓狂]',
 	    title: '抓狂'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_19.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_19.png',
 	    alt: '[吐]',
 	    title: '吐'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_20.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_20.png',
 	    alt: '[偷笑]',
 	    title: '偷笑'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_21.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_21.png',
 	    alt: '[愉快]',
 	    title: '愉快'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_22.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_22.png',
 	    alt: '[白眼]',
 	    title: '白眼'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_23.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_23.png',
 	    alt: '[傲慢]',
 	    title: '傲慢'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_24.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_24.png',
 	    alt: '[饥饿]',
 	    title: '饥饿'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_25.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_25.png',
 	    alt: '[困]',
 	    title: '困'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_26.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_26.png',
 	    alt: '[惊恐]',
 	    title: '惊恐'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_27.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_27.png',
 	    alt: '[流汗]',
 	    title: '流汗'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_28.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_28.png',
 	    alt: '[憨笑]',
 	    title: '憨笑'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_29.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_29.png',
 	    alt: '[悠闲]',
 	    title: '悠闲'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_30.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_30.png',
 	    alt: '[奋斗]',
 	    title: '奋斗'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_31.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_31.png',
 	    alt: '[咒骂]',
 	    title: '咒骂'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_32.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_32.png',
 	    alt: '[疑问]',
 	    title: '疑问'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_33.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_33.png',
 	    alt: '[嘘]',
 	    title: '嘘'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_34.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_34.png',
 	    alt: '[晕]',
 	    title: '晕'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_35.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_35.png',
 	    alt: '[疯了]',
 	    title: '疯了'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_36.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_36.png',
 	    alt: '[衰]',
 	    title: '衰'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_37.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_37.png',
 	    alt: '[骷髅]',
 	    title: '骷髅'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_38.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_38.png',
 	    alt: '[敲打]',
 	    title: '敲打'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_39.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_39.png',
 	    alt: '[再见]',
 	    title: '再见'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_40.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_40.png',
 	    alt: '[擦汗]',
 	    title: '擦汗'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_41.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_41.png',
 	    alt: '[抠鼻]',
 	    title: '抠鼻'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_42.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_42.png',
 	    alt: '[鼓掌]',
 	    title: '鼓掌'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_43.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_43.png',
 	    alt: '[糗大了]',
 	    title: '糗大了'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_44.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_44.png',
 	    alt: '[坏笑]',
 	    title: '坏笑'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_45.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_45.png',
 	    alt: '[左哼哼]',
 	    title: '左哼哼'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_46.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_46.png',
 	    alt: '[右哼哼]',
 	    title: '右哼哼'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_47.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_47.png',
 	    alt: '[哈欠]',
 	    title: '哈欠'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_48.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_48.png',
 	    alt: '[鄙视]',
 	    title: '鄙视'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_49.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_49.png',
 	    alt: '[委屈]',
 	    title: '委屈'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_50.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_50.png',
 	    alt: '[快哭了]',
 	    title: '快哭了'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_51.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_51.png',
 	    alt: '[阴险]',
 	    title: '阴险'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_52.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_52.png',
 	    alt: '[亲亲]',
 	    title: '亲亲'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_53.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_53.png',
 	    alt: '[吓]',
 	    title: '吓'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_54.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_54.png',
 	    alt: '[可怜]',
 	    title: '可怜'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_55.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_55.png',
 	    alt: '[菜刀]',
 	    title: '菜刀'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_56.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_56.png',
 	    alt: '[西瓜]',
 	    title: '西瓜'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_57.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_57.png',
 	    alt: '[啤酒]',
 	    title: '啤酒'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_58.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_58.png',
 	    alt: '[篮球]',
 	    title: '篮球'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_59.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_59.png',
 	    alt: '[乒乓]',
 	    title: '乒乓'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_60.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_60.png',
 	    alt: '[咖啡]',
 	    title: '咖啡'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_61.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_61.png',
 	    alt: '[饭]',
 	    title: '饭'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_62.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_62.png',
 	    alt: '[猪头]',
 	    title: '猪头'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_63.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_63.png',
 	    alt: '[玫瑰]',
 	    title: '玫瑰'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_64.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_64.png',
 	    alt: '[凋谢]',
 	    title: '凋谢'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_65.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_65.png',
 	    alt: '[嘴唇]',
 	    title: '嘴唇'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_66.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_66.png',
 	    alt: '[爱心]',
 	    title: '爱心'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_67.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_67.png',
 	    alt: '[心碎]',
 	    title: '心碎'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_68.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_68.png',
 	    alt: '[蛋糕]',
 	    title: '蛋糕'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_69.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_69.png',
 	    alt: '[闪电]',
 	    title: '闪电'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_70.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_70.png',
 	    alt: '[炸弹]',
 	    title: '炸弹'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_71.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_71.png',
 	    alt: '[刀]',
 	    title: '刀'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_72.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_72.png',
 	    alt: '[足球]',
 	    title: '足球'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_73.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_73.png',
 	    alt: '[瓢虫]',
 	    title: '瓢虫'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_74.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_74.png',
 	    alt: '[便便]',
 	    title: '便便'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_75.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_75.png',
 	    alt: '[月亮]',
 	    title: '月亮'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_76.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_76.png',
 	    alt: '[太阳]',
 	    title: '太阳'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_77.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_77.png',
 	    alt: '[礼物]',
 	    title: '礼物'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_78.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_78.png',
 	    alt: '[拥抱]',
 	    title: '拥抱'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_79.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_79.png',
 	    alt: '[强]',
 	    title: '强'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_80.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_80.png',
 	    alt: '[弱]',
 	    title: '弱'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_81.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_81.png',
 	    alt: '[握手]',
 	    title: '握手'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_82.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_82.png',
 	    alt: '[胜利]',
 	    title: '胜利'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_83.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_83.png',
 	    alt: '[抱拳]',
 	    title: '抱拳'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_84.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_84.png',
 	    alt: '[勾引]',
 	    title: '勾引'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_85.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_85.png',
 	    alt: '[拳头]',
 	    title: '拳头'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_86.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_86.png',
 	    alt: '[差劲]',
 	    title: '差劲'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_87.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_87.png',
 	    alt: '[爱你]',
 	    title: '爱你'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_88.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_88.png',
 	    alt: '[NO]',
 	    title: 'NO'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_89.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_89.png',
 	    alt: '[OK]',
 	    title: 'OK'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_90.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_90.png',
 	    alt: '[爱情]',
 	    title: '爱情'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_91.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_91.png',
 	    alt: '[飞吻]',
 	    title: '飞吻'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_92.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_92.png',
 	    alt: '[跳跳]',
 	    title: '跳跳'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_93.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_93.png',
 	    alt: '[发抖]',
 	    title: '发抖'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_94.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_94.png',
 	    alt: '[怄火]',
 	    title: '怄火'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_95.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_95.png',
 	    alt: '[转圈]',
 	    title: '转圈'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_96.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_96.png',
 	    alt: '[磕头]',
 	    title: '磕头'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_97.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_97.png',
 	    alt: '[回头]',
 	    title: '回头'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_98.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_98.png',
 	    alt: '[跳绳]',
 	    title: '跳绳'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_99.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_99.png',
 	    alt: '[投降]',
 	    title: '投降'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_100.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_100.png',
 	    alt: '[激动]',
 	    title: '激动'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_101.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_101.png',
 	    alt: '[乱舞]',
 	    title: '乱舞'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_102.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_102.png',
 	    alt: '[献吻]',
 	    title: '献吻'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_103.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_103.png',
 	    alt: '[左太极]',
 	    title: '左太极'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_104.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smiley_dx@2x/smiley_104.png',
 	    alt: '[右太极]',
 	    title: '右太极'
 	  }]
 	}, {
 	  className: 'emotion-icon',
-	  src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/navigation/xiaotuan@2x.png',
+	  src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/navigation/xiaotuan@2x.png',
 	  type: 'emotion',
 	  width: 56,
 	  height: 59,
 	  children: [{
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_0.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_0.png',
 	    alt: '[微笑]',
 	    title: '微笑'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_1.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_1.png',
 	    alt: '[亲亲]',
 	    title: '亲亲'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_2.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_2.png',
 	    alt: '[加油]',
 	    title: '加油'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_3.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_3.png',
 	    alt: '[抠鼻]',
 	    title: '抠鼻'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_4.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_4.png',
 	    alt: '[流汗]',
 	    title: '流汗'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_5.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_5.png',
 	    alt: '[惊讶]',
 	    title: '惊讶'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_6.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_6.png',
 	    alt: '[哭]',
 	    title: '哭'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_7.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_7.png',
 	    alt: '[鄙视]',
 	    title: '鄙视'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_8.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_8.png',
 	    alt: '[再见]',
 	    title: '再见'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_9.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_9.png',
 	    alt: '[鼓掌]',
 	    title: '鼓掌'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_10.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_10.png',
 	    alt: '[握手]',
 	    title: '握手'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_11.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_11.png',
 	    alt: '[赞]',
 	    title: '赞'
 	  }, {
-	    src: 'http://mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_12.png',
+	    src: '//mss.vip.sankuai.com/v1/mss_31d89955789b40b1af40224c1f884be8/emotion/smileyXT@24x/smiley_xiaotuan_12.png',
 	    alt: '[OK]',
 	    title: 'OK'
 	  }]

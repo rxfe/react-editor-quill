@@ -66,17 +66,28 @@ class App extends React.Component {
         }}
         formatter={formatter}
         matchRange={[0, 5]}
+        mentionFormatter={data => ({
+          label: data.text,
+          value: data.text
+        })}
         placeholder="123213213"
         notfound="notfound"
       />,
       <Meniton
         delimiter="#"
-        mentionFormatter={data => `#${data.text}#`}
+        mentionFormatter={data => ({
+          label: `#${data.text}#`,
+          value: 'data.text'
+        })}
         source={source}
         formatter={formatter}
         insertMode="TEXT_NODE"
       />,
       <ImageUpload
+        validator={file => {
+          console.log(file)
+          return false
+        }}
         uploadFile={file =>
           new Promise((resolve, reject) => {
             const reader = new FileReader();

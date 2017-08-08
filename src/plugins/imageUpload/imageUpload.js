@@ -4,7 +4,7 @@ import { PropTypes } from 'react';
 const Delta = Quill.import('delta');
 
 function insertImage (file) {
-  if (!this.validator) return null;
+  if (!this.validator(file)) return null;
   const editor = this.quill;
   const dateTime = new Date().getTime().toString();
   const range = editor.getSelection(true);

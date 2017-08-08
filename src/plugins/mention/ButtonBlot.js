@@ -24,6 +24,8 @@ class ButtonBlot extends Embed {
   format (name, value) {
     if (name === 'mention' && value) {
       this.domNode.dataset.value = value;
+    } else if (name === 'id' && value) {
+      this.domNode.dataset.id = value;
     } else {
       super.format(name, value);
     }

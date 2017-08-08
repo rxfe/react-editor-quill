@@ -254,7 +254,7 @@ class QuillMention extends Component {
       this.runMatcher(false);
     }
   }
-  insertWithElementNode (mentionContent) {
+  insertWithElementNode (mentionData) {
     this.quill.off('selection-change');
     if (this.STORE.bookmark) {
       this.quill.selection.setRange(this.STORE.bookmark);
@@ -265,13 +265,13 @@ class QuillMention extends Component {
       new Delta()
         .retain(range.index)
         .delete(range.length)
-        .insert({ mention: mentionContent })
+        .insert({ mention: mentionData.label }, { id: mentionData.value })
         .insert(' ')
     );
     this.quill.setSelection(range.index + 2, 0);
   }
 
-  insertWithTextNode (mentionContent) {
+  insertWithTextNode (mentionData) {
     this.quill.off('selection-change');
     if (this.STORE.bookmark) {
       this.quill.selection.setRange(this.STORE.bookmark);
@@ -282,10 +282,10 @@ class QuillMention extends Component {
       new Delta()
         .retain(range.index)
         .delete(range.length)
-        .insert(mentionContent)
+        .insert(mentionData.label)
         .insert(' ')
     );
-    this.quill.setSelection(range.index + mentionContent.length + 1, 0);
+    this.quill.setSelection(range.index + mentionData.label.length + 1, 0);
   }
   insert (mentionContent) {
     const { insertMode } = this.props;
@@ -301,9 +301,9 @@ class QuillMention extends Component {
   }
   insertMentionData (mentionData) {
     const { mentionFormatter, onAdd } = this.props;
-    const insertContent = mentionFormatter(mentionData);
-    this.insert(insertContent);
-    onAdd(insertContent, mentionData);
+    const formatterResult = mentionFormatter(mentionData);
+    this.insert(formatterResult);
+    onAdd(formatterResult, mentionData);
   }
 
   selectItem (data) {
@@ -419,7 +419,10 @@ QuillMention.defaultProps = {
   delay: 100,
   matchRange: [0, 20],
   formatter: data => data,
-  mentionFormatter: data => `@${data.text}`,
+  mentionFormatter: data => ({
+    label: `@${data.text}`,
+    value: `@${data.text}`
+  }),
   panelFormatter: data => `${data.text}`,
   onChange: () => {},
   onAdd: () => {},
