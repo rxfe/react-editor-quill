@@ -265,7 +265,7 @@ class QuillMention extends Component {
       new Delta()
         .retain(range.index)
         .delete(range.length)
-        .insert({ mention: mentionData.label }, { id: mentionData.value })
+        .insert({ mention: mentionData.label }, { 'data-id': mentionData.value })
         .insert(' ')
     );
     this.quill.setSelection(range.index + 2, 0);
