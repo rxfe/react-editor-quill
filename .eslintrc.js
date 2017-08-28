@@ -23,6 +23,11 @@ module.exports = {
     "react/jsx-filename-extension": ["error", {"extensions": [".js"]}],
     "react/require-default-props": [0],
     "class-methods-use-this": 0,
-    "react/no-did-update-set-state": 1
+    "react/no-did-update-set-state": 1,
+    "no-return-assign": "warn",
+    "no-mixed-operators": "warn",
+    "jsx-a11y/no-static-element-interactions": "warn",
+    "react/prop-types": "warn",
+    "no-param-reassign": "warn"
   },
 };
