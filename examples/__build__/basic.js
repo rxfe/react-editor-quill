@@ -34,19 +34,19 @@ webpackJsonp([0,1],[
 
 	var _imageUpload2 = _interopRequireDefault(_imageUpload);
 
-	var _deltaToHtml = __webpack_require__(210);
+	var _deltaToHtml = __webpack_require__(211);
 
 	var _deltaToHtml2 = _interopRequireDefault(_deltaToHtml);
 
-	var _emoji = __webpack_require__(211);
+	var _emoji = __webpack_require__(212);
 
 	var _emoji2 = _interopRequireDefault(_emoji);
 
-	__webpack_require__(216);
+	__webpack_require__(217);
 
-	__webpack_require__(218);
+	__webpack_require__(219);
 
-	__webpack_require__(220);
+	__webpack_require__(221);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -133,10 +133,6 @@ webpackJsonp([0,1],[
 	        formatter: formatter,
 	        insertMode: 'TEXT_NODE'
 	      }), _react2.default.createElement(_imageUpload2.default, {
-	        validator: function validator(file) {
-	          console.log(file);
-	          return false;
-	        },
 	        uploadFile: function uploadFile(file) {
 	          return new Promise(function (resolve, reject) {
 	            var reader = new FileReader();
@@ -56586,12 +56582,25 @@ webpackJsonp([0,1],[
 
 	var _react = __webpack_require__(1);
 
+	var _hasModule = __webpack_require__(206);
+
+	var _hasModule2 = _interopRequireDefault(_hasModule);
+
+	var _imageBlot = __webpack_require__(210);
+
+	var _imageBlot2 = _interopRequireDefault(_imageBlot);
+
 	function _interopRequireDefault(obj) {
 	  return obj && obj.__esModule ? obj : { default: obj };
 	}
 
 	var Delta = _quill2.default.import('delta');
 
+	if (!(0, _hasModule2.default)(_quill2.default, 'formats/newImage')) {
+	  _quill2.default.register({
+	    'formats/newImage': _imageBlot2.default
+	  });
+	}
 	function insertImage(file) {
 	  var _this = this;
 
@@ -56604,10 +56613,11 @@ webpackJsonp([0,1],[
 	    _this.quill.selection.update(_quill2.default.sources.SILENT);
 	    // range.length contributes to delta.length()
 	    // 更新编辑器内容
-	    editor.updateContents(new Delta().retain(range.index).delete(range.length).insert({ image: _this.defaultImg }, {
+	    editor.updateContents(new Delta().retain(range.index).delete(range.length).insert({ newImage: _this.defaultImg }, {
 	      alt: dateTime,
 	      width: _this.defaultWidth,
-	      height: _this.defaultHeight
+	      height: _this.defaultHeight,
+	      class: _this.defaultImgPrefixCls
 	    }), 'user');
 	    _this.quill.setSelection(range.index - range.length + 1, _quill2.default.sources.SILENT);
 	    _this.quill.scrollingContainer.scrollTop = scrollTop;
@@ -56681,13 +56691,15 @@ webpackJsonp([0,1],[
 	}
 	ImageUpload.propTypes = {
 	  uploadFile: _react.PropTypes.func.isRequired,
-	  validator: _react.PropTypes.func
+	  validator: _react.PropTypes.func,
+	  defaultImgPrefixCls: _react.PropTypes.string
 	  // quill: PropTypes.objectOf(PropTypes.any).isRequired,
 	};
 	ImageUpload.defaultProps = {
 	  defaultImg: 'http://file.digitaling.com/eImg/uimages/20150907/1441607669881619.gif',
 	  defaultWidth: 200,
 	  defaultHeight: 150,
+	  defaultImgPrefixCls: 'loading-img',
 	  validator: function validator() {
 	    return true;
 	  }
@@ -56696,6 +56708,117 @@ webpackJsonp([0,1],[
 
 /***/ }),
 /* 210 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	}();
+
+	var _get = function get(object, property, receiver) {
+	  if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
+	    var parent = Object.getPrototypeOf(object);if (parent === null) {
+	      return undefined;
+	    } else {
+	      return get(parent, property, receiver);
+	    }
+	  } else if ("value" in desc) {
+	    return desc.value;
+	  } else {
+	    var getter = desc.get;if (getter === undefined) {
+	      return undefined;
+	    }return getter.call(receiver);
+	  }
+	};
+
+	var _quill = __webpack_require__(192);
+
+	var _quill2 = _interopRequireDefault(_quill);
+
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { default: obj };
+	}
+
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+
+	function _possibleConstructorReturn(self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+
+	var ImageBlot = _quill2.default.import('formats/image');
+
+	var ATTRIBUTES = ['alt', 'height', 'width', 'class'];
+
+	var Image = function (_ImageBlot) {
+	  _inherits(Image, _ImageBlot);
+
+	  function Image() {
+	    _classCallCheck(this, Image);
+
+	    return _possibleConstructorReturn(this, (Image.__proto__ || Object.getPrototypeOf(Image)).apply(this, arguments));
+	  }
+
+	  _createClass(Image, [{
+	    key: 'format',
+	    value: function format(name, value) {
+	      if (ATTRIBUTES.indexOf(name) > -1) {
+	        if (value) {
+	          this.domNode.setAttribute(name, value);
+	        } else {
+	          this.domNode.removeAttribute(name);
+	        }
+	      } else {
+	        _get(Image.prototype.__proto__ || Object.getPrototypeOf(Image.prototype), 'format', this).call(this, name, value);
+	      }
+	    }
+	  }], [{
+	    key: 'formats',
+	    value: function formats(domNode) {
+	      return ATTRIBUTES.reduce(function (formats, attribute) {
+	        if (domNode.hasAttribute(attribute)) {
+	          formats[attribute] = domNode.getAttribute(attribute);
+	        }
+	        return formats;
+	      }, {});
+	    }
+	  }]);
+
+	  return Image;
+	}(ImageBlot);
+
+	Image.blotName = 'newImage';
+	Image.tagName = 'IMG';
+
+	exports.default = Image;
+	module.exports = exports['default'];
+
+/***/ }),
+/* 211 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56723,7 +56846,7 @@ webpackJsonp([0,1],[
 	module.exports = exports['default'];
 
 /***/ }),
-/* 211 */
+/* 212 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56732,7 +56855,7 @@ webpackJsonp([0,1],[
 	  value: true
 	});
 
-	var _emoji = __webpack_require__(212);
+	var _emoji = __webpack_require__(213);
 
 	var _emoji2 = _interopRequireDefault(_emoji);
 
@@ -56744,7 +56867,7 @@ webpackJsonp([0,1],[
 	module.exports = exports['default'];
 
 /***/ }),
-/* 212 */
+/* 213 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56777,15 +56900,15 @@ webpackJsonp([0,1],[
 
 	var _quill2 = _interopRequireDefault(_quill);
 
-	var _emojiList = __webpack_require__(213);
+	var _emojiList = __webpack_require__(214);
 
 	var _emojiList2 = _interopRequireDefault(_emojiList);
 
-	var _emojiContainer = __webpack_require__(214);
+	var _emojiContainer = __webpack_require__(215);
 
 	var _emojiContainer2 = _interopRequireDefault(_emojiContainer);
 
-	var _toolbarEmoji = __webpack_require__(215);
+	var _toolbarEmoji = __webpack_require__(216);
 
 	var _toolbarEmoji2 = _interopRequireDefault(_toolbarEmoji);
 
@@ -56945,7 +57068,7 @@ webpackJsonp([0,1],[
 	module.exports = exports['default'];
 
 /***/ }),
-/* 213 */
+/* 214 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -57443,7 +57566,7 @@ webpackJsonp([0,1],[
 	module.exports = exports['default'];
 
 /***/ }),
-/* 214 */
+/* 215 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -57617,7 +57740,7 @@ webpackJsonp([0,1],[
 	module.exports = exports['default'];
 
 /***/ }),
-/* 215 */
+/* 216 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -57645,13 +57768,13 @@ webpackJsonp([0,1],[
 	module.exports = exports['default'];
 
 /***/ }),
-/* 216 */
+/* 217 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(217);
+	var content = __webpack_require__(218);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -57676,7 +57799,7 @@ webpackJsonp([0,1],[
 	}
 
 /***/ }),
-/* 217 */
+/* 218 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(186)(undefined);
@@ -57690,13 +57813,13 @@ webpackJsonp([0,1],[
 
 
 /***/ }),
-/* 218 */
+/* 219 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(219);
+	var content = __webpack_require__(220);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -57721,7 +57844,7 @@ webpackJsonp([0,1],[
 	}
 
 /***/ }),
-/* 219 */
+/* 220 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(186)(undefined);
@@ -57735,13 +57858,13 @@ webpackJsonp([0,1],[
 
 
 /***/ }),
-/* 220 */
+/* 221 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(221);
+	var content = __webpack_require__(222);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -57766,7 +57889,7 @@ webpackJsonp([0,1],[
 	}
 
 /***/ }),
-/* 221 */
+/* 222 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(186)(undefined);

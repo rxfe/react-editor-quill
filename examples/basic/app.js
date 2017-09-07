@@ -84,10 +84,6 @@ class App extends React.Component {
         insertMode="TEXT_NODE"
       />,
       <ImageUpload
-        validator={file => {
-          console.log(file)
-          return false
-        }}
         uploadFile={file =>
           new Promise((resolve, reject) => {
             const reader = new FileReader();

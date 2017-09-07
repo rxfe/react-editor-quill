@@ -1,8 +1,15 @@
 import Quill from 'quill';
 import { PropTypes } from 'react';
+import isQuillHasModule from '../../utils/hasModule';
+import ImageBlot from './imageBlot';
 
 const Delta = Quill.import('delta');
 
+if (!isQuillHasModule(Quill, 'formats/newImage')) {
+  Quill.register({
+    'formats/newImage': ImageBlot
+  });
+}
 function insertImage (file) {
   if (!this.validator(file)) return null;
   const editor = this.quill;
@@ -15,11 +22,12 @@ function insertImage (file) {
     // 更新编辑器内容
     editor.updateContents(
       new Delta().retain(range.index).delete(range.length).insert(
-        { image: this.defaultImg },
+        { newImage: this.defaultImg },
         {
           alt: dateTime,
           width: this.defaultWidth,
-          height: this.defaultHeight
+          height: this.defaultHeight,
+          class: this.defaultImgPrefixCls
         }
       ),
       'user'
@@ -101,12 +109,14 @@ export default function ImageUpload (props) {
 }
 ImageUpload.propTypes = {
   uploadFile: PropTypes.func.isRequired,
-  validator: PropTypes.func
+  validator: PropTypes.func,
+  defaultImgPrefixCls: PropTypes.string
   // quill: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 ImageUpload.defaultProps = {
   defaultImg: 'http://file.digitaling.com/eImg/uimages/20150907/1441607669881619.gif',
   defaultWidth: 200,
   defaultHeight: 150,
+  defaultImgPrefixCls: 'loading-img',
   validator: () => true
 };
